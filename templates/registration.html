@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color:#327bce; /*#004b9b;*/ 
+            background-color: #3b8be6;  /* #f2f2f2; */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 120vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            width: 95%;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        input[type="text"],
+        input[type="date"],
+        input[type="email"],
+        input[type="number"] {
+            width: 95%;
+            padding: 10px;
+            border: 1px solid #3b8be6;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-right: 10px;
+           
+        }
+
+        input:focus { 
+             outline: rgb(1, 69, 146) !important;
+             border-color: #247cdb;
+             box-shadow: 0 0 10px #63acfa;
+        }
+        input[type="submit"] {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        select{
+            width: 95%;
+            padding: 10px;
+            border: 1px solid #3b8be6;
+            border-radius: 5px;
+            font-size: 16px;
+            
+        }
+        select:focus { 
+             outline: rgb(31, 110, 141) !important;
+             border-color: #247cdb;
+             box-shadow: 0 0 10px #63a7f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <h2><b>REGISTRATION</b></h2>
+        
+        <form id="registration" onsubmit="submitForm(); return false;">
+            
+            <div class="form-group">
+                <label for="name">First Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="lastname">Last Name</label>
+                <input type="text" id="lastname" name="lastname" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <!--div class="form-group">
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address" required>
+            </div-->
+            <div class="form-group">
+                <label for="boardinghouse">Boarding House</label>
+                <select type="text" id="boardinghouse" name="boardinghouse" required>
+                    <option>3337 MATANZAS ST. MAKATI</option>
+                    <option>4194 NEGROS ST. MAKATI</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="contact">Contact</label>
+                <input type="text" id="contact" name="contact" required>
+            </div>
+            <!--div class="form-group">
+                <label for="birthday">Birthday</label>
+                <input type="date" id="birthday" name="birthday" required>
+            </div-->
+            <div class="form-group">
+                <label for="paymentDate">Payment Date</label>
+                <input type="date" id="paymentDate" name="paymentDate" required>
+            </div>
+            <div class="form-group">
+                <label for="rentRate">Rent Rate</label>
+                <input type="number" id="rentRate" name="rentRate" required>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Submit">
+            </div>
+
+        </form>
+
+        <!-- Modal -->
+<div class="modal fade" id="statusmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="statustittle">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button id="cancel" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button id="submit-new" type="button" class="btn btn-primary">Submit New</button>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+    </div>
+    <script>
+        function submitForm() {
+            const form = document.getElementById('registration');
+            const formData = new FormData(form);
+            form.addEventListener('submit', (event) => { 
+                event.preventDefault();               
+            });
+            
+            fetch('/submit-form', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data =>{
+                if(data.error_message){
+                     openModal(data.error_message);
+                }else{
+                    openModal("Successful Submission!");
+                }
+            })
+            .catch(error => {
+                openModal("Error occured: "+error);
+                console.error('Error:', error);
+            });
+            console.log("Submit");
+                      
+            
+        }
+        document.getElementById('cancel').addEventListener('click', function(){
+            window.location = "/";
+        });
+        document.getElementById('submit-new').addEventListener('click', function(){
+            document.getElementById('registration').reset();
+            $("#statusmodal").modal("hide");
+        });
+        function openModal(body_message) {
+        // Get the modal elements
+        console.log("Open Modal Called!");
+        const myModal = document.getElementById('statusmodal');
+        myModal.querySelector('.modal-title').textContent = "Status";
+        myModal.querySelector('.modal-body').innerHTML = body_message;
+        /*
+        if(secondButton){
+            document.getElementById('submit-new').disabled = false;
+        }
+        else{
+            document.getElementById('submit-new').disabled = true;
+        }*/
+        
+        
+        $('#statusmodal').modal('show');
+        
+        
+    }
+    </script>
+    
+      
+</body>
+</html>

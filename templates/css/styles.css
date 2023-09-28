@@ -1,0 +1,67 @@
+/* styles.css */
+
+header {
+    background-color:#3b8be6;  /*#3498db; Header background color */
+    color: #fff; /* Header text color */
+    border-radius: 10px;
+    text-align: center; /* Center-align text */
+    padding: 20px 0; /* Add padding to the top and bottom */
+}
+
+header h1 {
+    font-family: 'Arial', sans-serif; /* Choose a suitable font-family */
+    font-size: 36px; /* Adjust the font size */
+    margin: 0; /* Remove default margin to make it flush with the header */
+}
+
+header i {
+    font-family: 'Arial', sans-serif; /* Choose a suitable font-family */
+    font-size: 36px; /* Adjust the font size */
+    color: #fff;
+    margin: 0; /* Remove default margin to make it flush with the header */
+}
+.dashboard-box {
+    display: block;
+    text-decoration: none;
+    background-color: #3b8be6; /*#3498db;*/
+    color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 10px;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center; /* Center icon and title vertically */
+    text-decoration: none;
+}
+
+.dashboard-box .box-content {
+    display: flex;
+    align-items: center; /* Center icon and title horizontally */
+}
+
+.dashboard-box .icon {
+    font-size: 30px; /* Adjust the icon size as needed */
+    margin-right: 15px; /* Spacing between icon and title */
+}
+
+.dashboard-box:hover {
+    background-color: #2980b9;
+}
+
+.dashboard-box h2 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.dashboard-box p {
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+footer {
+    text-align: center; /* Center-align text within the footer */
+}
+
+footer p {
+    margin: 0; /* Remove default margin to center the text vertically if needed */
+}
