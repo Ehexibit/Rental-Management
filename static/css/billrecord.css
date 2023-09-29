@@ -1,0 +1,184 @@
+/* billrecord.css */
+body {
+    background-color: #007BFF;   /* #3b8be6; #f2f2f2; */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+}
+	
+.buttonDiv{
+	display: flex;
+}
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+	background-color: #007BFF; /*#3498db; */
+	color: #fff;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+		
+}
+
+#encodeBillButton {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#registerBillerButton {
+    display: block;
+    margin: 20px auto;
+    padding: 10px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background-color: #007BFF;
+    color: #fff;
+}
+.paid-row {
+            
+    background-color: lightgreen;
+    border: 2px solid white;
+            
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
+/* ... Previous CSS styles ... */
+
+/* Styles for the Monthly Bills table */
+#monthlyBillsTable {
+    margin-top: 30px;
+    width: 100%;
+}
+
+#monthlyBillsTable th, #monthlyBillsTable td {
+    padding: 8px;
+    text-align: center;
+}
+
+#monthlyBillsTable th {
+    background-color: #333;
+    color: #fff;
+}
+
+#monthlyBillsTable tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#monthlyBillsTable tr:hover {
+    background-color: #ddd;
+}
+
+/* ... Previous CSS styles ... */
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Style for the modal container */
+.modal-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 80%;
+    padding: 20px;
+    text-align: center;
+    position: relative; /* Add position relative for absolute close button */
+}
+
+        /* Style for the close button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 24px;
+    color: #888;
+}
+
+/* Style for the "X" icon */
+.close-button::before {
+    content: "\00D7"; /* HTML entity for the "X" character */
+}
+
+
+/* Style for the modal form */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+label {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+input[type="text"],
+select {
+    padding: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button[type="button"] {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button[type="button"]:hover {
+    background-color: #0056b3;
+}
+   

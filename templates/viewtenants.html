@@ -20,7 +20,7 @@
         }
 
         h1 {
-            text-align: center;
+            
             background-color: #3498db;
             color: white;
             padding: 10px;
@@ -41,7 +41,7 @@
         }
 
         th {
-            background-color: #3498db;
+            background-color: #007BFF; /*#3498db;*/
             color: white;
         }
 
@@ -57,7 +57,8 @@
 <body>
     <header>
         <!-- Add your header content here, including the icon and title -->
-        <a href="/"><div><i class="fas fa-home"></i></div></a><h1>REGISTERED TENANTS</h1>
+        <a href="/"><div><i class="fas fa-home"></i></div></a>
+        <h2><div class="icon"><i class="fas fa-users"></i></div>&nbsp;REGISTERED TENANTS</h2>
         <!--div class="header-content">
             <img src="icon.png" alt="App Icon">
             <h1>Property Management App</h1>
@@ -84,21 +85,10 @@
 
     <footer>
         <!-- Add your footer content here -->
-        <p>&copy; 2023 Ehexibit. All rights reserved.</p>
+        <p><p>&nbsp;</p>&copy;2023 Ehexibit. All rights reserved.</p>
     </footer>
     <script>
-        // Replace this with the actual data you receive from your backend.
-        const dataFromBackend = [
-            {
-                Name: "John",
-                Lastname: "Doe",
-                Contact: "123-456-7890",
-                Email: "john@example.com",
-                DateRegistered: "2023-09-27"
-            },
-            // Add more data objects as needed
-        ];
-
+     
         // Function to populate the data table
         function populateTable(data) {
             const dataList = document.getElementById("data-list");

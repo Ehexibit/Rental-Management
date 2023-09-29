@@ -1,29 +1,35 @@
 /* styles.css */
-
 header {
-    background-color: #3498db; /* Header background color */
+    background-color: #007BFF;  /* #3498db; Header background color */
     color: #fff; /* Header text color */
-    border-radius: 10px;
-    text-align: center; /* Center-align text */
-    padding: 20px 0; /* Add padding to the top and bottom */
+     /*  Center-align text */
+    padding: 15px 0; /* Add padding to the top and bottom */
 }
 
 header h1 {
+    text-align: center;
     font-family: 'Arial', sans-serif; /* Choose a suitable font-family */
-    font-size: 36px; /* Adjust the font size */
-    margin: 0; /* Remove default margin to make it flush with the header */
+    font-size: 30px; /* Adjust the font size */
+    margin-left: 5px; /* Remove default margin to make it flush with the header */
 }
 
+header h2 {
+    text-align: center;
+    font-family: 'Arial', sans-serif; /* Choose a suitable font-family */
+    font-size: 25px; /* Adjust the font size */
+    margin-left: 5px; /* Remove default margin to make it flush with the header */
+}
 header i {
+    text-align: left;
     font-family: 'Arial', sans-serif; /* Choose a suitable font-family */
     font-size: 36px; /* Adjust the font size */
     color: #fff;
-    margin: 0; /* Remove default margin to make it flush with the header */
+    margin-left: 10px; /* Remove default margin to make it flush with the header */
 }
 .dashboard-box {
     display: block;
     text-decoration: none;
-    background-color: #3498db;
+    background-color: #007BFF; /*#3498db;*/
     color: #fff;
     padding: 20px;
     border-radius: 5px;

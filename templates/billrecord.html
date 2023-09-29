@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill Record</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/billrecord.css') }}">
+    
+      
+</head>
+<body>
+    <h1><div class="icon"><i class="fas fa-file-invoice-dollar"></i></div>&nbsp;Bill Record</h1>
+    <div class="container">
+        <div class="buttonDiv">
+            <button id="encodeBillButton" onclick="openAddModal();">Encode Bill</button>
+            <button id="registerBillerButton" onclick="openAddModal();">Register Biller</button>
+            
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tenant Name</th>
+                    <th>Amount</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>001</td>
+                    <td>John Doe</td>
+                    <td>$50.00</td>
+                    <td>12-31-2023</td>
+                    <td>Paid</td>
+                </tr>
+                <tr>
+                    <td>002</td>
+                    <td>Jane Smith</td>
+                    <td>$30.00</td>
+                    <td>12-31-2023</td>
+                    <td>Unpaid</td>
+                </tr>
+                <tr>
+                    <td>003</td>
+                    <td>Robert Johnson</td>
+                    <td>$75.50</td>
+                    <td>12-31-2023</td>
+                    <td>Paid</td>
+                </tr>
+            </tbody>
+        </table>
+<!-- ... Previous content ... -->
+
+<table id="monthlyBillsTable">
+    <thead>
+        <tr>
+            <th>Bill</th>
+            <th>Amount</th>
+            <th>Due Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="bill-row" data-bill-type="Internet">
+            <td>Internet</td>
+            <td>$50.00</td>
+            <td>12-31-2023</td>            
+            <td><span class="status unpaid">Unpaid</span></td>
+        </tr>
+        <tr class="bill-row" data-bill-type="Electricity">
+            <td>Electricity</td>
+            <td>$30.00</td>
+            <td>12-31-2023</td>
+            <td><span class="status paid">Paid</span></td>
+        </tr>
+        <tr class="bill-row" data-bill-type="Water">
+            <td>Water</td>
+            <td>$20.00</td>
+            <td>12-31-2023</td>
+            <td><span class="status unpaid">Unpaid</span></td>
+        </tr>
+
+        <tr class="bill-row" data-bill-type="Loan">
+            <td>Loan</td>
+            <td>$20.00</td>
+            <td>12-31-2023</td>
+            <td><span class="status unpaid">Unpaid</span></td>
+        </tr>
+    </tbody>
+</table>
+
+   
+
+</div>
+<footer style="text-align: center;">
+    <p>&nbsp;</p>
+    <h4>REMAN - Rental Management</h4>
+    <p>&copy; 2023 Ehexibit - All rights reserved </p>
+</footer>
+   
+
+    <!-- Modal overlay for adding bill records -->
+    <div id="addModalOverlay" class="modal-overlay">
+        <div class="modal-container">
+            <span class="close-button" onclick="closeAddModal()"></span>
+            <h2>Add Bill Record</h2>
+            <form id="addBillForm">
+                <label for="addBillType">Bill Type:</label>
+                <input type="text" id="addBillType" required>
+                <label for="addBillAmount">Amount:</label>
+                <input type="text" id="addBillAmount" placeholder="Enter amount" required>
+                <label for="addDueDate">Due Date:</label>
+                <input type="date" id="addDueDate" required>
+                <label for="addBillStatus">Status:</label>
+                <select id="addBillStatus" required>
+                    <option value="paid">Paid</option>
+                    <option value="unpaid">Unpaid</option>
+                </select>
+                <button type="button" onclick="addBill()">Add</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal overlay for updating bill records -->
+    <div id="modalOverlay" class="modal-overlay">
+        <div class="modal-container">
+            <span class="close-button" onclick="closeModal()"></span>
+            <h2>Update Bill Record</h2>
+            <form>
+                <label for="billType">Bill Type:</label>
+                <input type="text" id="billType" readonly>
+                <label for="billAmount">Amount:</label>
+                <input type="text" id="billAmount" placeholder="Enter amount">
+                <label for="billStatus">Status:</label>
+                <select id="billStatus">
+                    <option value="paid">Paid</option>
+                    <option value="unpaid">Unpaid</option>
+                </select>
+                <button type="button" onclick="updateBill()">Update</button>
+            </form>
+        </div>
+       
+    </div>
+
+    <script>
+        billRecordInit();
+        // JavaScript code for handling the "Encode Bill" button click event
+        document.getElementById("encodeBillButton").addEventListener("click", function () {
+            // Implement functionality to add a new bill record here
+            //alert("You clicked the Encode Bill button!");
+        });
+
+         // JavaScript functions for opening and closing the modal
+        function openModal(billType) {
+            const modalOverlay = document.getElementById('modalOverlay');
+            modalOverlay.style.display = 'flex';
+            document.getElementById('billType').value = billType;
+        }
+
+        function closeModal() {
+            const modalOverlay = document.getElementById('modalOverlay');
+            modalOverlay.style.display = 'none';
+        }
+
+        // Function to update the bill status
+        function updateBill() {
+
+            console.log("updatebill");
+
+            const billType = document.getElementById('billType').value;
+            const billAmount = document.getElementById('billAmount').value;
+            const billStatus = document.getElementById('billStatus').value;
+
+            document.querySelectorAll('.bill-row').
+            forEach((row) =>{
+                console.log(row.getAttribute('data-bill-type')+" =? "+billType);
+                
+               // const row = document.querySelector(`.bill-row[data-bill-type="${billType}"]`);
+            
+                // Find and update the <td> elements for Amount and Status
+                const amountCell = row.querySelector('td:nth-child(2)');
+                const statusCell = row.querySelector('td:nth-child(4) span');
+                    
+                if(row.getAttribute('data-bill-type') === billType){
+                    
+                    statusCell.classList.remove('unpaid');
+                    statusCell.classList.add('paid');
+                    row.classList.add('paid-row');
+                    amountCell.innerHTML = billAmount;
+                    statusCell.innerHTML = 'Paid';
+                }
+                   
+                
+                //if(row.getAttribute('data-bill-type') === billType){
+                 //   console.log("updating bill-row");
+                 //   row.getElementById = billAmount;
+                 //   row.billStatus.value = billStatus;
+               // }
+            });
+            // Update the bill status in the table (you can implement this)
+            // You can also update the data on the server if needed
+
+            // Close the modal
+            closeModal();
+        }
+
+        // Add click event listeners to each bill row
+        function billRecordInit(){
+            const billRows = document.querySelectorAll('.bill-row');
+            billRows.forEach(function (row) {
+                rowStatus = row.querySelector('td:nth-child(4) span');
+                
+                if(rowStatus.innerHTML === 'Paid'){
+                    console.log(rowStatus);
+                    row.classList.add('paid-row');
+                }
+                row.addEventListener('click', function () {
+
+                billStatus = row.querySelector('td:nth-child(4) span');
+                const billType = this.getAttribute('data-bill-type');
+                
+                console.log("Bill Status: ");
+                console.log(billStatus);
+                if(billStatus.innerHTML === 'Unpaid')
+                openModal(billType);
+                
+            });
+                        
+        });
+
+        }
+        
+
+        // JavaScript functions for opening and closing the add modal
+        function openAddModal() {
+            const addModalOverlay = document.getElementById('addModalOverlay');
+            addModalOverlay.style.display = 'flex';
+        }
+
+        function closeAddModal() {
+            const addModalOverlay = document.getElementById('addModalOverlay');
+            addModalOverlay.style.display = 'none';
+        }
+
+        // Function to add a new bill record to the table
+        function addBill() {
+            const billType = document.getElementById('addBillType').value;
+            const billAmount = document.getElementById('addBillAmount').value;
+            const dueDate = document.getElementById('addDueDate').value;
+            const billStatus = document.getElementById('addBillStatus').value;
+
+            // Create a new row for the bill record
+            const newRow = document.createElement('tr');
+            newRow.classList.add('bill-row');
+            newRow.dataset.billType = billType;
+
+            // Create table data cells for each parameter
+            const typeCell = document.createElement('td');
+            typeCell.textContent = billType;
+
+            const amountCell = document.createElement('td');
+            amountCell.textContent = `$${billAmount}`;
+
+            const dueDateCell = document.createElement('td');
+            dueDateCell.textContent = dueDate;
+
+            const statusCell = document.createElement('td');
+            const statusSpan = document.createElement('span');
+            statusSpan.classList.add('status', billStatus);
+            statusSpan.textContent = billStatus === 'paid' ? 'Paid' : 'Unpaid';
+            statusCell.appendChild(statusSpan);
+
+            // Append the cells to the row
+            newRow.appendChild(typeCell);
+            newRow.appendChild(amountCell);
+            newRow.appendChild(dueDateCell);
+            newRow.appendChild(statusCell);
+
+            // Append the row to the table
+            const tableBody = document.querySelector('#monthlyBillsTable tbody');
+            tableBody.appendChild(newRow);
+            
+            //reinitializebillRecords so that the new table row entry will listen to touch click
+            billRecordInit();
+
+            // Close the add modal
+            closeAddModal();
+        }
+
+    </script>
+</body>
+
+</html>
