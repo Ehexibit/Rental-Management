@@ -27,6 +27,10 @@ def admin():
 def registration():
     return render_template('registration.html')
 
+@app.route('/billrecords')
+def billrecords():
+    return render_template('billrecord.html')
+
 @app.route('/viewtenants')
 def viewtenants():
     return render_template('viewtenants.html')
