@@ -5,19 +5,31 @@ import re #Regix pattern
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String
 
-app = Flask(__name__, static_url_path='/static')
 
-# MySQL configurations (replace with your own database information)
-password = os.environ.get('MYSQLPW')
-sqlAlchemyUri = "mysql://admin:"+password+"@localhost/database_name"
-app.config['MYSQL_HOST'] = 'localhost'  # Database host (e.g., localhost)
-app.config['MYSQL_USER'] = 'admin'   # Database username
-app.config['MYSQL_PASSWORD'] = password   # Database password
-app.config['MYSQL_DB'] = 'tenant'   # Database name
-app.config['SQLALCHEMY_DATABASE_URI'] = sqlAlchemyUri
-mysql = MySQL(app)
-db = SQLAlchemy(app)
+db = SQLAlchemy()
+mysql = MySQL()
 
+def create_app():
+
+    app = Flask(__name__, static_url_path='/static')
+
+    # MySQL configurations (replace with your own database information)
+    password = os.environ.get('MYSQLPW')
+    sqlAlchemyUri = "mysql://admin:"+password+"@localhost/database_name"
+    app.config['MYSQL_HOST'] = 'localhost'  # Database host (e.g., localhost)
+    app.config['MYSQL_USER'] = 'admin'   # Database username
+    app.config['MYSQL_PASSWORD'] = password   # Database password
+    app.config['MYSQL_DB'] = 'tenant'   # Database name
+    app.config['SQLALCHEMY_DATABASE_URI'] = sqlAlchemyUri
+   
+    mysql.init_app(app)
+    db.init_app(app)
+        
+    from login import auth
+    app.register_blueprint(auth, url_prefix='/auth')
+    return app
+
+app = create_app()
 
 @app.route('/')
 def admin():
