@@ -8,18 +8,6 @@ auth = Blueprint('auth',__name__)
 
 db = SQLAlchemy()
 
-class User(db.Model):
-
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
-
-    def __init__(self, username, email, password):
-        self.username = username
-        self.email = email
-        self.password = password
-
 @auth.route('/')
 def authm():
     return render_template('registration.html')
@@ -52,8 +40,11 @@ def login():
 
 @auth.route('/dashboard', methods=['GET','POST'])
 def dashboard():
-    if not session.get('logged_in'):
-        print('Sorry folks you cant log in')
-        return redirect(url_for('login'))
+    if request.method == 'POST':
+
+        if not session.get('logged_in'):
+            print('Sorry folks you cant log in')
+            return redirect(url_for('login'))
+        return redirect(url_for('admin'))
     
-    return render_template('admin.html')
+    return redirect(url_for('admin'))

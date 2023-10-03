@@ -109,12 +109,20 @@
             <span class="close-button" onclick="closeAddModal()"></span>
             <h2>Add Bill Record</h2>
             <form id="addBillForm">
-                <label for="addBillType">Bill Type:</label>
+                <label for="addBillType">Bill</label>
                 <input type="text" id="addBillType" required>
                 <label for="addBillAmount">Amount:</label>
                 <input type="text" id="addBillAmount" placeholder="Enter amount" required>
-                <label for="addDueDate">Due Date:</label>
+                <div>
+                    <label for="addDueDate">Due Date:</label>
                 <input type="date" id="addDueDate" required>
+
+                <label for="addPaidDate">Date Paid:</label>
+                <input type="date" id="addPaidDate" required>
+
+                </div>
+
+            
                 <label for="addBillStatus">Status:</label>
                 <select id="addBillStatus" required>
                     <option value="paid">Paid</option>
@@ -147,6 +155,7 @@
     </div>
 
     <script>
+        
         billRecordInit();
         // JavaScript code for handling the "Encode Bill" button click event
         document.getElementById("encodeBillButton").addEventListener("click", function () {
@@ -156,6 +165,7 @@
 
          // JavaScript functions for opening and closing the modal
         function openModal(billType) {
+                      
             const modalOverlay = document.getElementById('modalOverlay');
             modalOverlay.style.display = 'flex';
             document.getElementById('billType').value = billType;
@@ -239,6 +249,15 @@
         function openAddModal() {
             const addModalOverlay = document.getElementById('addModalOverlay');
             addModalOverlay.style.display = 'flex';
+            const paidDate = document.getElementById('addPaidDate');
+            const statusPaid = document.getElementById('addBillStatus')
+            statusPaid.addEventListener('change',()=>{
+                console.log(statusPaid.value);
+                if(statusPaid.value === 'paid'){
+                    paidDate.disabled = false; 
+                }
+                else{ paidDate.disabled = true; } 
+            });
         }
 
         function closeAddModal() {

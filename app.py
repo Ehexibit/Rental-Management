@@ -27,6 +27,8 @@ def create_app():
         
     from login import auth
     app.register_blueprint(auth, url_prefix='/auth')
+    from get_data import get_data
+    app.register_blueprint(get_data)
     return app
 
 app = create_app()
@@ -111,7 +113,7 @@ def add_cors_headers(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
     return response
 
-@app.route('/get_data', methods=['GET'])
+@app.route('/get_datas', methods=['GET'])
 def get_data():
     try:
         # Connect to the MySQL database
