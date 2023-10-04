@@ -30,22 +30,25 @@ def signup():
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        db = current_app.db
+        
         # Replace with your actual user validation logic (e.g., database query)
         if request.form['username'] == 'user' and request.form['password'] == 'password':
             session['logged_in'] = True
             return redirect(url_for('admin'))
         else:
-            if 'logged_in' in session:
-                session.pop('logged_in')
-            print('logged_in' in session)
             return 'Login Failed'
-    return redirect(url_for('authm'))
+    if 'logged_in' in session:
+        return redirect(url_for('admin'))
+    else:
+        return redirect(url_for('auth.authm'))
 
-@auth.route('logout',methods=['POST'])
+@auth.route('/logout',methods=['GET', 'POST'])
 def logout():
-    session['logged_in'] = False
-    return redirect(url_for('login'))
+    if request.method == ['GET']:
+        if 'logged_in' in session:
+            session.pop('logged_in')
+            return redirect(url_for('auth.login'))
+    return redirect(url_for('auth.login'))
 
 @auth.route('/dashboard', methods=['GET','POST'])
 def dashboard():
