@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, session, redirect, url_for, render_template, jsonify
 from flask_mysqldb import MySQL
 import os #OS command
 import re #Regix pattern
@@ -21,7 +21,9 @@ def create_app():
     app.config['MYSQL_PASSWORD'] = password   # Database password
     app.config['MYSQL_DB'] = 'tenant'   # Database name
     app.config['SQLALCHEMY_DATABASE_URI'] = sqlAlchemyUri
-   
+    app.secret_key = "TestingApplication"
+    
+    print("App Config - Session Duration:",app.permanent_session_lifetime)
     mysql.init_app(app)
     db.init_app(app)
         
@@ -35,6 +37,11 @@ app = create_app()
 
 @app.route('/')
 def admin():
+
+    if not 'logged_in' in session:
+        
+       return redirect(url_for('auth.authm'))
+    
     return render_template('admin.html')
 
 @app.route('/registration')

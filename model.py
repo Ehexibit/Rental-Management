@@ -1,11 +1,12 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship 
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Enum
-from app import db;
+from flask_sqlalchemy import SQLAlchemy
+from flask import Blueprint, current_app
 
 
-
-Base = declarative_base
+db = SQLAlchemy()
+Base = declarative_base()
 #This user will be the management
 class User(Base):
 
@@ -72,15 +73,17 @@ class Entity(Base):
     __tablename__ = 'entity'
     id = Column(Integer,primary_key=True)
 
+def init_model():
+    
+    db = current_app.db
+    # Create the tables based on the models you can make logic
+    Base.metadata.create_all(db)
 
-# Create the tables based on the models you can make logic
-Base.metadata.create_all(db)
+    # Create a session
+    Session = sessionmaker(bind=db)
+    session = Session()
 
-# Create a session
-Session = sessionmaker(bind=db)
-session = Session()
+    # Perform database operations with your models
 
-# Perform database operations with your models
-
-# Close the session
-session.close()
+    # Close the session
+    session.close()
