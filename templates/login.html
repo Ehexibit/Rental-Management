@@ -30,11 +30,10 @@
 
         } 
         .container-body{
-            
-            padding: 20px;
+            padding: 30px;
 
         }
-        h2{
+        h1{
             text-shadow: 5px 2px 5px #002144;
             padding-top: 10px;
         }
@@ -52,7 +51,7 @@
         }
 
         input[type="text"], input[type="password"] {
-            font-size: x-small;
+            font-size: medium;
             color:#0080ff;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
             width: 95%;
@@ -88,7 +87,7 @@
     <div class="container">
 
         <div class="container-header">
-            <h2>Welcome to ReMan</h2>
+            <h1>ReMan</h1>
             <h4>Rental Management</h4>
         </div>
         <div class="container-body">
@@ -99,7 +98,7 @@
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required="">
     
-                <button type="submit">Sign in</button>
+                <button type="submit" onclick="onSignIn()">Sign in</button>
             </form>
         </div>
         
@@ -109,6 +108,37 @@
         <h5>REMAN - Rental Management</h5>
         <h5>&copy; 2023 Ehexibit - All rights reserved </h5>
     </footer>
+
+    <script>
+        function onSignIn(){
+            
+            const form = document.getElementById('registration');
+            const formData = new FormData(form);
+            form.addEventListener('submit', (event) => { 
+                event.preventDefault();               
+            });
+            
+            fetch('/submit-form', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data =>{
+                if(data.error_message){
+                     openModal(data.error_message);
+                }else{
+                    
+                    console.log("Signed In"); 
+                }
+            })
+            .catch(error => {
+                openModal("Error occured: "+error);
+                console.error('Error:', error);
+            });
+                       
+            
+        }
+    </script>
 
 
 

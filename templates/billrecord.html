@@ -113,14 +113,14 @@
                 <input type="text" id="addBillType" required>
                 <label for="addBillAmount">Amount:</label>
                 <input type="text" id="addBillAmount" placeholder="Enter amount" required>
-                <div>
-                    <label for="addDueDate">Due Date:</label>
+                
+                    <label for="addDueDate">Due Date</label>
                 <input type="date" id="addDueDate" required>
 
-                <label for="addPaidDate">Date Paid:</label>
+                <label for="addPaidDate">Date Paid</label>
                 <input type="date" id="addPaidDate" required>
 
-                </div>
+                
 
             
                 <label for="addBillStatus">Status:</label>
@@ -141,12 +141,12 @@
             <form>
                 <label for="billType">Bill Type:</label>
                 <input type="text" id="billType" readonly>
-                <label for="billAmount">Amount:</label>
+                <label for="billAmount">Amount</label>
                 <input type="text" id="billAmount" placeholder="Enter amount">
-                <label for="billStatus">Status:</label>
+                <label for="billStatus">Status</label>
                 <select id="billStatus">
-                    <option value="paid">Paid</option>
                     <option value="unpaid">Unpaid</option>
+                    <option value="paid">Paid</option>
                 </select>
                 <button type="button" onclick="updateBill()">Update</button>
             </form>
@@ -190,7 +190,7 @@
                 console.log(row.getAttribute('data-bill-type')+" =? "+billType);
                 
                // const row = document.querySelector(`.bill-row[data-bill-type="${billType}"]`);
-            
+                
                 // Find and update the <td> elements for Amount and Status
                 const amountCell = row.querySelector('td:nth-child(2)');
                 const statusCell = row.querySelector('td:nth-child(4) span');
@@ -200,7 +200,7 @@
                     statusCell.classList.remove('unpaid');
                     statusCell.classList.add('paid');
                     row.classList.add('paid-row');
-                    amountCell.innerHTML = billAmount;
+                    if(billAmount != '')amountCell.innerHTML = billAmount;
                     statusCell.innerHTML = 'Paid';
                 }
                    

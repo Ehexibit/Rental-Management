@@ -1,4 +1,4 @@
-from flask import Flask, request, session, redirect, url_for, render_template, jsonify
+from flask import Flask, request, session, redirect, url_for, render_template, jsonify, current_app
 from flask_mysqldb import MySQL
 import os #OS command
 import re #Regix pattern
@@ -6,8 +6,9 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String
 
 
-db = SQLAlchemy()
 mysql = MySQL()
+db = SQLAlchemy()
+
 
 def create_app():
 
@@ -15,22 +16,31 @@ def create_app():
 
     # MySQL configurations (replace with your own database information)
     password = os.environ.get('MYSQLPW')
-    sqlAlchemyUri = "mysql://admin:"+password+"@localhost/database_name"
+    sqlAlchemyUri = "mysql://admin:"+password+"@localhost:3306/reman"
     app.config['MYSQL_HOST'] = 'localhost'  # Database host (e.g., localhost)
     app.config['MYSQL_USER'] = 'admin'   # Database username
     app.config['MYSQL_PASSWORD'] = password   # Database password
-    app.config['MYSQL_DB'] = 'tenant'   # Database name
+    app.config['MYSQL_DB'] = 'reman'   # Database name
     app.config['SQLALCHEMY_DATABASE_URI'] = sqlAlchemyUri
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
     app.secret_key = "TestingApplication"
     
     print("App Config - Session Duration:",app.permanent_session_lifetime)
+
+    
     mysql.init_app(app)
     db.init_app(app)
-        
+    with app.app_context():
+         app.db = db
+         app.mysql = mysql
+
     from login import auth
     app.register_blueprint(auth, url_prefix='/auth')
     from get_data import get_data
     app.register_blueprint(get_data)
+    from tenant import tenant
+    app.register_blueprint(tenant,url_prefix='/tenant')
+
     return app
 
 app = create_app()
@@ -150,4 +160,7 @@ class User(db.Model):
 
 #CORS End
 if __name__ == '__main__':
+    
     app.run(debug=True, host='0.0.0.0', port=5000)
+    #from model import init_model
+    #init_model()

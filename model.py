@@ -1,11 +1,11 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship 
-from sqlalchemy import Column, Integer, String, ForeignKey, Date, Enum
+from sqlalchemy.orm import sessionmaker, relationship , Session
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Enum, Double, create_engine, inspect
+from flask import current_app
 from flask_sqlalchemy import SQLAlchemy
-from flask import Blueprint, current_app
+import bcrypt
 
 
-db = SQLAlchemy()
 Base = declarative_base()
 #This user will be the management
 class User(Base):
@@ -20,7 +20,27 @@ class User(Base):
     def __init__(self, username, email, password):
         self.username = username
         self.email = email
-        self.password = password
+        self.set_password(password)
+
+    def set_password(self, password):
+        # Hash the password and store the hash in the 'password' field
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+        self.password = hashed_password.decode('utf-8')
+
+    def check_password(self, password):
+        # Check if the provided password matches the stored hash
+        return bcrypt.checkpw(password.encode('utf-8'), self.password.encode('utf-8'))
+    
+    def to_json(self):
+        return  { 
+                    "email":  self.email,
+                    "username": self.username
+                    
+                }
+
+    def from_json(cls, json_data):
+        return cls(json_data["username"],json_data["email"])
 
 
 class Tenant(Base):
@@ -29,34 +49,42 @@ class Tenant(Base):
 
     id = Column(Integer,primary_key=True)
     unique_id = Column(Integer, ForeignKey('entity.id'))
-    name = Column(String, nullable=False)
-    lastname = Column(String)
-    email = Column(String)
-    duedate = Column(Date,nullable=False)
-    paiddate = Column(Date)
+    name = Column(String(50), nullable=False)
+    lastname = Column(String(50))
+    email = Column(String(255))
+    due_date = Column(Date,nullable=False)
+    paid_date = Column(Date)
+    rent_rate = Column(Double, nullable=False)
+    contact = Column(Integer)
+    gender = Column(Enum('Male,Female,Other'),default='Other')
 
     entity = relationship('Entity')
 
-    def __init__(self, unique_id, duedate, name, lastname=None, email=None, paiddate=None):
+    def __init__(self, unique_id, duedate, rentRate, name, lastname=None, email=None, paiddate=None, contact=None, gender=None):
+        
         self.unique_id = unique_id
         self.name = name
         self.lastname = lastname
         self.email = email
         self.duedate = duedate
         self.paiddate = paiddate
+        self.rentRate = rentRate
+        self.contact = contact
+        self.gender = gender
 
 class BillRecord(Base):
-    __tablename__ = 'billRecord'
+    __tablename__ = 'billrecord'
     id = Column(Integer,primary_key=True)
     unique_id = Column(Integer, ForeignKey('entity.id'))
-    duedate = Column(Date, nullable=False)
-    billstatus = Column(Enum('Paid, Unpaid'), nullable=False, default='Unpaid')
-    paiddate = Column(Date)
+    due_date = Column(Date, nullable=False)
+    bill_status = Column(Enum('Paid, Unpaid'), nullable=False, default='Unpaid')
+    paid_date = Column(Date)
 
     entity = relationship('Entity')
 
 
     def __init__(self, unique_id, duedate, paiddate=None):
+        
         self.unique_id = unique_id
         self.duedate = duedate
         self.paiddate = paiddate
@@ -64,7 +92,7 @@ class BillRecord(Base):
 class Biller(Base):
     __tablename__ = 'biller'
     id = Column(Integer,primary_key=True)
-    name = Column(String, nullable=False)
+    name = Column(String(50), nullable=False)
     unique_id = Column(Integer, ForeignKey('entity.id'))
 
     entity = relationship('Entity')
@@ -74,16 +102,40 @@ class Entity(Base):
     id = Column(Integer,primary_key=True)
 
 def init_model():
-    
-    db = current_app.db
-    # Create the tables based on the models you can make logic
-    Base.metadata.create_all(db)
 
-    # Create a session
-    Session = sessionmaker(bind=db)
+    from flask import current_app
+    #from flask_mysqldb import MySQL
+    #mysql = MySQL()
+    with current_app.app_context():
+        
+        mysql = current_app.mysql
+      
+    engine = create_engine('mysql://', creator=lambda: mysql.connection)
+    #Create a session
+    Session = sessionmaker(bind=engine)
     session = Session()
 
-    # Perform database operations with your models
-
-    # Close the session
+    create_tables_if_not_exist(Base,engine)
+    # Close the session when done
     session.close()
+    # Check if tables exist and create them if needed
+
+def create_tables_if_not_exist(Base,engine):
+
+    inspector = inspect(engine)
+    existing_tables = inspector.get_table_names()
+
+    for table_name in Base.metadata.tables.keys():
+        if table_name in existing_tables:
+           
+            #Base.metadata.create_all(engine,tables=[BillRecord.__table__]) -> for specific table creation
+            #It will not word though if table name is already at the database so you should DROP TABLE table name firt
+            Base.metadata.create_all(engine)
+            print(f"Table {table_name} created.")
+
+
+
+
+
+
+    

@@ -5,54 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registered Tenants</title>
     <!-- Include your CSS file with the theme styles -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/viewtenants.css') }}">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-        }
-
-        h1 {
-            
-            background-color: #3498db;
-            color: white;
-            padding: 10px;
-        }
-
-        table {
-            margin-top: 10px;
-            width: 100%;
-            border-collapse: collapse;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-            background-color: #f9f9f9;
-            
-        }
-
-        th, td {
-            text-align: left;
-            padding: 10px;
-        }
-
-        th {
-            background-color: #007BFF; /*#3498db;*/
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #e5e5e5;
-        }
-
-        tr:nth-child(odd) {
-            background-color: #f5f5f5;
-        }
-    </style>
+   
 </head>
 <body>
     <header>
@@ -96,11 +57,11 @@
             data.forEach(item => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
-                    <td>${item[0]}</td>
-                    <td>${item[1]}</td>
-                    <td>${item[2]}</td>
-                    <td>${item[3]}</td>
-                    <td>${dateFormat(item[4])}</td>
+                    <td>${item['username']}</td>
+                    <td>${item['lastname']}</td>
+                    <td>${item['contact']}</td>
+                    <td>${item['email']}</td>
+                    <td>${dateFormat(item['date'])}</td>
                 `;
                 dataList.appendChild(row);
             });
@@ -108,13 +69,13 @@
 
         // Call the function to populate the table with data
         function fetchData() {
-        fetch('/get_data') // Make sure this matches the route in your Flask app
+        fetch('/tenant') // Make sure this matches the route in your Flask app
             .then(response => response.json())
             .then(data => {
                 populateTable(data);
             })
             .catch(error => {
-                console.error('Error fetching data:', error);
+                console.log('Error fetching data:', error);
             });
             
         }
