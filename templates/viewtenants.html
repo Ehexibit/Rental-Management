@@ -57,11 +57,11 @@
             data.forEach(item => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
-                    <td>${item['username']}</td>
+                    <td>${item['name']}</td>
                     <td>${item['lastname']}</td>
                     <td>${item['contact']}</td>
                     <td>${item['email']}</td>
-                    <td>${dateFormat(item['date'])}</td>
+                    <td>${dateFormat(item['due_date'])}</td>
                 `;
                 dataList.appendChild(row);
             });

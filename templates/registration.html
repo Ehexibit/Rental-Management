@@ -37,7 +37,7 @@
             </div-->
             <div class="form-group">
                 <label for="boardinghouse">Boarding House</label>
-                <select type="text" id="boardinghouse" name="boardinghouse" required>
+                <select type="text" id="address" name="address" required>
                     <option>3337 MATANZAS ST. MAKATI</option>
                     <option>4194 NEGROS ST. MAKATI</option>
                 </select>
@@ -52,11 +52,11 @@
             </div-->
             <div class="form-group">
                 <label for="paymentDate">Payment Date</label>
-                <input type="date" id="paymentDate" name="paymentDate" required>
+                <input type="date" id="payment_date" name="payment_date" required>
             </div>
             <div class="form-group">
                 <label for="rentRate">Rent Rate</label>
-                <input type="number" id="rentRate" name="rentRate" required>
+                <input type="number" id="rent_rate" name="rent_rate" required>
             </div>
             <div class="form-group">
                 <input type="submit" value="Submit">
@@ -96,7 +96,7 @@
                 event.preventDefault();               
             });
             
-            fetch('/submit-form', {
+            fetch('/tenant/0', {
                 method: 'POST',
                 body: formData,
             })
@@ -110,7 +110,7 @@
             })
             .catch(error => {
                 openModal("Error occured: "+error);
-                console.error('Error:', error);
+                console.log('Error:', error);
             });
             console.log("Submit");
                       

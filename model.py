@@ -56,21 +56,37 @@ class Tenant(Base):
     paid_date = Column(Date)
     rent_rate = Column(Double, nullable=False)
     contact = Column(Integer)
-    gender = Column(Enum('Male,Female,Other'),default='Other')
+    gender = Column(Enum('Male','Female','Other'),default='Other')
+    address = Column(String(150))
 
     entity = relationship('Entity')
 
-    def __init__(self, unique_id, duedate, rentRate, name, lastname=None, email=None, paiddate=None, contact=None, gender=None):
+    def __init__(self, unique_id, due_date, rent_rate, name, lastname=None, email=None, paid_date=None, contact=None, gender=None, address=None):
         
         self.unique_id = unique_id
         self.name = name
         self.lastname = lastname
         self.email = email
-        self.duedate = duedate
-        self.paiddate = paiddate
-        self.rentRate = rentRate
+        self.due_date = due_date
+        self.paid_date = paid_date
+        self.rent_rate = rent_rate
         self.contact = contact
         self.gender = gender
+        self.address = address
+
+    def to_json(self):
+        return  { 
+                    "name":  self.name,
+                    "lastname": self.lastname,
+                    "email": self.email,
+                    "contact": self.contact,
+                    "due_date": self.due_date
+                    
+                }
+
+    def from_json(cls, json_data):
+        return cls(json_data["name"],json_data["lastname"],json_data["email"],json_data["contact"],json_data["due_date"])
+    
 
 class BillRecord(Base):
     __tablename__ = 'billrecord'
