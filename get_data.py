@@ -1,9 +1,9 @@
 
 from flask import Blueprint, current_app
 from flask import request, session, redirect, url_for, render_template, jsonify
-from flask_sqlalchemy import SQLAlchemy
+
 from flask_mysqldb import MySQL
-from login import User
+
 
 
 get_data = Blueprint('get_data', __name__)
@@ -46,29 +46,47 @@ def getAllTenant():
 
     return redirect(url_for('auth.authm'))
 
-@get_data.route('/user', methods=['GET','POST'])
+@get_data.route('/users', methods=['PUT'])
 def user_crud():
-    from sqlalchemy import create_engine
+    
     from sqlalchemy.orm import sessionmaker
-    from model import User
     from crud import get_user_by_id
 
-    if request.method == 'GET':
-        text = request.args.get('text')
-        id = request.args.get('id')
+    if request.method == 'PUT':
+        
+        form_data = request.form
+        print("Form Data Content",form_data.get('username'),form_data.get('old_password'),form_data.get('password'))
+        if 'username' in form_data:
+            pass
+        username = form_data.get('username')
+        id = session['user_id']
+        old_password = form_data.get('old_password')
+        password = form_data.get('password')
 
         with current_app.app_context():
-            mysql = current_app.mysql
-            engine = create_engine('mysql://', creator=lambda: mysql.connection)
+            engine = current_app.engine
         #Create a session
         Session = sessionmaker(bind=engine)
         db = Session()
         user = get_user_by_id(db,id)
-        user.set_password(text)
-        db.commit()
-        db.close()
-        return 'Successful updating password'
+        if username is not None:
+            user.username = username
+        
+        if old_password is not None:
+            
+            if user.check_password(old_password):
+                if password is not None:
+                    user.set_password(password)
+                    db.commit()
+                    db.close()
+                    return jsonify(str('Successful updating password'))
+                return 'Password cannot be empty' 
+            
+            print("Invalid password or user not found")
+            return jsonify(str('Invalid Password'))
+                
+        return jsonify(str('Failed Updating'))
     
-    return 'POST method'
+    return jsonify(str('POST or GET, DELETE METHOD'))
 
     

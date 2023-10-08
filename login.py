@@ -37,7 +37,7 @@ def signup():
 def login():
     if request.method == 'POST':
         
-        # Replace with your actual user validation logic (e.g., database query)
+        #With actual user validation logic (e.g., database query)
         #if request.form['username'] == 'admin' and request.form['password'] == 'your@pass@word':
         #   session['logged_in'] = True
         #  return redirect(url_for('admin'))
@@ -46,19 +46,18 @@ def login():
         #The following code will be the correct way to handle user log in
         from crud import get_user_by_username
         with current_app.app_context():
-            mysql = current_app.mysql
-            engine = create_engine('mysql://', creator=lambda: mysql.connection)
+           engine = current_app.engine
         #Create a session
         Session = sessionmaker(bind=engine)
         db = Session()
         username = get_user_by_username(db, request.form['username'])
-        #db.close()
+        db.close()
+
         if(username is not None):
             if(username.check_password(request.form['password'])):
                 session['logged_in'] = True
-                session['user_id'] = username.id
-                return redirect(url_for('admin'))
-            
+                session['user_id'] = username.id       
+                return redirect(url_for('admin'))     
             return 'Log in failure due to incorrect credentials'
         return 'Log in failure due to user not registered'
         
@@ -70,26 +69,30 @@ def login():
 
 @auth.route('/logout',methods=['GET', 'POST'])
 def logout():
-    if request.method == ['POST']:
-        print('Log out method = POST') 
-        if 'logged_in' in session:
-            print('logged_in' in  session)
-            session.pop('logged_in')
-            return redirect(url_for('auth.login'))
-        
-    print('Log out method = GET')
+
+    print('Log out method = ', request.method)
+
     if 'logged_in' in session:
         print('logged_in' in  session)
         session.pop('logged_in')
         return redirect(url_for('auth.login'))    
     return redirect(url_for('auth.login'))
 
+    #if request.method == ['POST']:
+    #    print('Log out method = POST') 
+    #   if 'logged_in' in session:
+    #       print('logged_in' in  session)
+    #       session.pop('logged_in')
+    #       return redirect(url_for('auth.login'))
+        
+   
+
 @auth.route('/dashboard', methods=['GET','POST'])
 def dashboard():
 
     if not session.get('logged_in'):
         print('Sorry folks you cant log in')
-        return redirect(url_for('authm'))
+        return redirect(url_for('auth.authm'))
     return redirect(url_for('admin'))
     
     

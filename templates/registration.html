@@ -92,11 +92,12 @@
         function submitForm() {
             const form = document.getElementById('registration');
             const formData = new FormData(form);
+            console.log("Form Data Content",formData)
             form.addEventListener('submit', (event) => { 
                 event.preventDefault();               
             });
             
-            fetch('/tenant/0', {
+            fetch('/tenant', {
                 method: 'POST',
                 body: formData,
             })

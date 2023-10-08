@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <title>Dashboard</title>  
     <link rel="stylesheet" href="{{ url_for('static', filename='css/drop_down_menu.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -12,6 +11,11 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='js/drop_down_menu.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+
 </head>
 <body>
     <header>
@@ -20,7 +24,7 @@
                     <div class="dropdown">
                         <div class="dropdown-menu" id="dropdown-menu">
                             <ul>
-                                <li><a style="text-decoration: none;" href="#">Account Settings</a></li>
+                                <li><a style="cursor: pointer; text-decoration: none;" data-toggle="modal" data-target="#modalForm">Account Settings</a></li>
                                 <li><a style="text-decoration: none;" href="/auth/logout">Logout</a></li>
                             </ul>
                         </div>
@@ -38,7 +42,7 @@
         </ul>
     </nav-->
     <main>
-        <a href="/registration" class="dashboard-box">
+        <a style="text-decoration: none;" href="/registration" class="dashboard-box">
             <section id="registration">
                 <div class="box-content">
                     <div class="icon"><i class="fas fa-user-plus"></i></div>
@@ -47,16 +51,16 @@
                 <!-- Registration form goes here -->
             </section>
         </a>
-        <a href="/viewtenants" class="dashboard-box">
+        <a style="text-decoration: none;" href="/viewtenants" class="dashboard-box">
             <section id="view-tenants">
                 <div class="box-content">
                     <div class="icon"><i class="fas fa-users"></i></div>
-                    <h2>View Registered Tenants</h2>
+                    <h2>View Registered</h2>
                 </div>
                 <!-- Tenant list or search/filter options go here -->
             </section>
         </a>
-        <a href="/billrecords" class="dashboard-box">
+        <a style="text-decoration: none;" href="/billrecords" class="dashboard-box">
             <section id="bill-records">
                 <div class="box-content">
                     <div class="icon"><i class="fas fa-file-invoice-dollar"></i></div>
@@ -65,7 +69,7 @@
                 <!-- Bill record display and filtering options go here encoding of billing if tentant pay then it will be here and house montly bill will be posted here like electricity water-->
             </section>
         </a>
-        <a href="#general-reports" class="dashboard-box" data-toggle="modal" data-target="#statusmodal">
+        <a style="text-decoration: none;" href="#general-reports" class="dashboard-box" data-toggle="modal" data-target="#statusmodal">
             <section id="general-reports">
                 <div class="box-content">
                     <div class="icon"><i class="fas fa-chart-bar"></i></div>
@@ -75,6 +79,41 @@
             </section>
         </a>
     </main>
+    <!--Account Setting Form-->
+    <div class="modal fade" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="padding-left: 20%;">Change Password</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <form id="account_setting" onsubmit="" action="/user" method="POST">
+
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+                        <label for="username">Username</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="old_password" name="old_password"  placeholder="Old Password">
+                        <label for="old_password">Old Password</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="New Password">
+                        <label for="password">New Password</label>
+                    </div>
+                     
+                    <button name="submit" type="submit" class="btn btn-primary" onclick="update_account()">Submit</button>
+                     
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+
+
     <!-- Modal -->
 <div class="modal fade" id="statusmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -99,5 +138,52 @@
         <p style="font-size: 15px;">REMAN - Rental Management</p>
         <p>&copy; 2023 Ehexibit - All rights reserved </p>
     </footer>
+    <script>
+        function update_account(){
+            console.log('Account updating..');
+            const form = document.querySelector('form')
+            const username = document.querySelector('#username')
+            const password = document.querySelector('#password')
+            console.log(username.value, password.value);
+
+            const formData = new FormData(form);
+            formData.forEach((value,key) => {
+                console.log("Key Value Pair", value , key);
+            });
+
+            form.addEventListener('submit', function (event) {
+
+                event.preventDefault(); 
+               
+                            
+            });
+            
+            
+
+            fetch('/user', {
+                    method: 'PUT',
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data =>{
+
+                    console.log("response status code:", data);
+                    if(data.status === 405){
+                     console.log("Failed updating password")
+                    }else{
+                     console.log("Updating Successful!")
+                     form.reset();
+                    }
+                })
+                .catch(error => {
+                console.log('Error:', error);
+                });
+                console.log("Submitted");  
+            
+            
+        }
+   
+    </script>
+
 </body>
 </html>

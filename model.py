@@ -76,6 +76,7 @@ class Tenant(Base):
 
     def to_json(self):
         return  { 
+                    "id": self.id,
                     "name":  self.name,
                     "lastname": self.lastname,
                     "email": self.email,

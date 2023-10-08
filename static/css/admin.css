@@ -37,7 +37,7 @@ header i {
     transition: background-color 0.3s ease;
     display: flex;
     align-items: center; /* Center icon and title vertically */
-    text-decoration: none;
+   
 }
 
 .dashboard-box .box-content {
@@ -63,7 +63,12 @@ header i {
     margin: 10px 0;
     font-size: 16px;
 }
-
+#account_setting{
+    padding: 20px;
+}
+.center-h4{
+    text-align: center;
+}
 footer {
     text-align: center; /* Center-align text within the footer */
 }

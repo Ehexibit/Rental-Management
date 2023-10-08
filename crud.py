@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 from model import Tenant, User, Biller, BillRecord  # Replace 'your_module' with the actual module where Tenant is defined
 from sqlalchemy import create_engine
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.exc import IntegrityError
 
 class ModelOperator:
     def __init__(self, session: Session):
@@ -48,6 +50,27 @@ class ModelOperator:
         # Implement the delete logic here
         pass
 
+def update_tenant(db: Session, id, data):
+        # Implement the update logic here
+        session = db
+        try:
+            # Retrieve the record to update
+            record = session.query(Tenant).filter_by(id=id).one()
+            
+            # Update the record's attributes with the data provided
+            for key, value in data.items():
+                setattr(record, key, value)
+            
+            session.commit()   
+            return record
+        
+        except NoResultFound:
+            return None  # Record not found
+        except Exception as e:
+            session.rollback()
+            raise e
+        finally:
+            session.close()
 
 #CRUD OPERATION FOR USER
 def create_user(session: Session, username, email, password):
@@ -105,12 +128,117 @@ def update_tenant(db: Session, tenant_id: int, name: str, lastname: str, email: 
         db.commit()
 
 def delete_tenant(db: Session, tenant_id: int):
-    tenant = db.query(Tenant).filter(Tenant.id == tenant_id).first()
-    if tenant:
+    try:
+        tenant = db.query(Tenant).filter(Tenant.id == tenant_id).one()
+     
         db.delete(tenant)
         db.commit()
+        
+        return 0
+
+    except IntegrityError as e:
+        print(f"Deleting Tenant Operation IntegrityError: {e}")
+        db.rollback()
+        return 1
+    except NoResultFound as e:
+        db.rollback() 
+        print(f"Deleting Tenant Operation NoResultFound: {e}")
+        return 2
+    except Exception as e:
+        print(f'Delete Tenant Operation Uncaught Exception: {e}')
+        return 3
+    finally:
+        db.close()
+
+
+#DELETE OPERATIONS FOR MODELS
+def delete_user(db: Session, user_id: int):
+    try:
+        user = db.query(User).filter(User.id == user_id).one()
+     
+        db.delete(user)
+        db.commit()
+        
+        return 0
+
+    except IntegrityError as e:
+        print(f"Deleting User Operation IntegrityError: {e}")
+        db.rollback()
+        return 1
+    except NoResultFound as e:
+        db.rollback() 
+        print(f"Deleting User Operation NoResultFound: {e}")
+        return 2
+    except Exception as e:
+        print('Delete User Operation Uncaught Exception')
+        return 3
+    finally:
+        db.close()
+    
+def delete_biller(db: Session, biller_id: int):
+    try:
+        biller = db.query(Biller).filter(Biller.id == biller_id).one()
+     
+        db.delete(biller)
+        db.commit()
+        
+        return 0
+
+    except IntegrityError as e:
+        print(f"Deleting Biller Operation IntegrityError: {e}")
+        db.rollback()
+        return 1
+    except NoResultFound as e:
+        db.rollback() 
+        print(f"Deleting Biller Operation NoResultFound: {e}")
+        return 2
+    except Exception as e:
+        print(f'Delete Biller Operation Uncaught Exception: {e}')
+        return 3
+    finally:
+        db.close()
+
+def delete_all(db: Session, Base: declarative_base):
+    try:
+        
+        db.delete(Base)
+        db.commit()
+        
+        return 0
+
+    except IntegrityError as e:
+        print(f"Delete All Operation IntegrityError: {e}")
+        db.rollback()
+        return 1
+    except NoResultFound as e:
+        db.rollback() 
+        print(f"Deleting All Operation NoResultFound: {e}")
+        return 2
+    except Exception as e:
+        print(f'Delete All Operation Uncaught Exception: {e}')
+        return 3
+    finally:
+        db.close()
+    
+#INSERT OPERTION FOR MODELS
+def insert_model(db: Session, Base: declarative_base):
+    try:
+        db.add(Base)
+        db.commit()
+        return 0
+    except IntegrityError as e:
+        db.rollback()
+        print(f"Inserting Model Operation IntegrityError: {e}")
+        return 1
+    except Exception as e:
+        db.rollback()
+        print(f"Inserting Model Operation Error: {e}")
+        return 2
+    finally:
+        db.close()
 
 
 
+    
 
 #CRUD OPERATION FOR BILLER START HERE

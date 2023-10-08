@@ -3,8 +3,7 @@ from flask_mysqldb import MySQL
 import os #OS command
 import re #Regix pattern
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String
-
+from sqlalchemy import Column, Integer, String, create_engine
 
 mysql = MySQL()
 db = SQLAlchemy()
@@ -30,9 +29,11 @@ def create_app():
     
     mysql.init_app(app)
     db.init_app(app)
+    engine = create_engine('mysql://', creator=lambda: mysql.connection)
     with app.app_context():
          app.db = db
          app.mysql = mysql
+         app.engine = engine
 
     from login import auth
     app.register_blueprint(auth, url_prefix='/auth')
@@ -40,6 +41,8 @@ def create_app():
     app.register_blueprint(get_data)
     from tenant import tenant
     app.register_blueprint(tenant,url_prefix='/tenant')
+    from user import user
+    app.register_blueprint(user,url_prefix='/user')
 
     return app
 
@@ -56,15 +59,27 @@ def admin():
 
 @app.route('/registration')
 def registration():
+    if not 'logged_in' in session:
+        
+       return redirect(url_for('auth.authm'))
     return render_template('registration.html')
 
 @app.route('/billrecords')
 def billrecords():
+    if not 'logged_in' in session:
+        
+       return redirect(url_for('auth.authm'))
     return render_template('billrecord.html')
 
 @app.route('/viewtenants')
 def viewtenants():
+    if not 'logged_in' in session:
+        
+       return redirect(url_for('auth.authm'))
     return render_template('viewtenants.html')
+
+
+
 
 @app.route('/submit-form', methods=['POST'])
 def submit_form():

@@ -3,7 +3,7 @@ from flask_mysqldb import MySQL
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from model import User, Tenant, Biller, BillRecord, Entity
-
+from crud import delete_tenant, update_tenant
 
 tenant = Blueprint('tenant', __name__)
 
@@ -13,9 +13,8 @@ def tenants():
         return redirect(url_for('auth.authm'))
 
     with current_app.app_context():
-        mysql = current_app.mysql
+        engine = current_app.engine
 
-    engine = create_engine('mysql://', creator=lambda: mysql.connection)   
     Session = sessionmaker(bind=engine)
     db = Session()
     
@@ -31,7 +30,7 @@ def tenants():
             rent_rate = request.form['rent_rate']
             contact = request.form['contact']
             address = request.form['address']
-            unique_id = db.query(Entity).count()
+            unique_id = db.query(Entity).order_by(Entity.id.desc()).first().id
             print('Assigning form data completed')
 
             db.add(
@@ -56,7 +55,9 @@ def tenants():
     if request.method == 'GET':
         tenants = db.query(Tenant).all()
         jsonarray = [tenant.to_json() for tenant in tenants]
-        return jsonarray
+        if jsonarray:
+            return jsonarray
+        return 'Empty'
 
     
 @tenant.route('/<int:tenant_id>', methods=['GET','PUT', 'DELETE'])
@@ -65,20 +66,31 @@ def tenant_crud(tenant_id):
         return redirect(url_for('auth.authm'))
 
     with current_app.app_context():
-        mysql = current_app.mysql
-
-    engine = create_engine('mysql://', creator=lambda: mysql.connection)   
+        engine = current_app.engine
     Session = sessionmaker(bind=engine)
     db = Session()
-
+    
     if request.method == 'GET':
+        if tenant_id == 0:
+            redirect('/0',)
+        tenants = db.query(Tenant).filter_by(id = tenant_id).first()
+        if tenants:
+            return tenants.to_json()
+        return 'Tenant not found!'
+
+    if request.method == 'DELETE':
+        result = delete_tenant(db,tenant_id)
+        if result is 0:
+            return 'Successful Deletion'
         #Request to read data where tenant id is given the result is Base Model Tenant object
-        pass
+        return 'Delete operation Failed'
        
     if request.method == 'PUT':
+        update_data = request.get_json()
+        if update_data:
+            result = update_tenant(db,tenant_id,update_data)
+            if result:
+                return result
+        return 'Invalid format or data submitted for update is empty! Use json format. Thank you' 
         #Request to update data where tenant id is given the result is Base Model Tenant object
-        pass
-    if request.method == 'DELETE':
-        #Request to delete data where tenant id is given the result is Base Model Tenant object if id is 0 then delete all
-        pass
-    return 'Failed Updating'
+     
