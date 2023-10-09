@@ -194,12 +194,13 @@
                 const statusCell = row.querySelector('td:nth-child(4) span');
                     
                 if(row.getAttribute('data-bill-type') === billType){
-                    
-                    statusCell.classList.remove('unpaid');
-                    statusCell.classList.add('paid');
-                    row.classList.add('paid-row');
-                    if(billAmount != '')amountCell.innerHTML = billAmount;
-                    statusCell.innerHTML = 'Paid';
+                    if(billStatus === 'paid'){
+                        statusCell.classList.remove('unpaid');
+                        statusCell.classList.add('paid');
+                        row.classList.add('paid-row');
+                        if(billAmount != '')amountCell.innerHTML = billAmount;
+                        statusCell.innerHTML = 'Paid';
+                    }
                 }
                    
                 
