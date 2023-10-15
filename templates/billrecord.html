@@ -14,12 +14,12 @@
     <h1><div class="icon"><i class="fas fa-file-invoice-dollar"></i></div>&nbsp;Bill Record</h1>
     <div class="container">
         <div class="buttonDiv">
-            <button id="encodeBillButton" onclick="openAddModal();">Encode Bill</button>
+            <button id="encodeBillButton" onclick="openAddModal();">Add Bill Rec.</button>
             <button id="registerBillerButton" onclick="openAddModal();">Register Biller</button>
             
         </div>
         
-        <table>
+        <table id="tenantBillTable">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -102,7 +102,37 @@
    
 
     <!-- Modal overlay for adding bill records -->
-    <div id="addModalOverlay" class="modal-overlay">
+    <div id="addBillModal" class="modal-overlay">
+        <div class="modal-container">
+            <span class="close-button" onclick="closeAddModal()"></span>
+            <h2>Add Bill Record</h2>
+            <form id="addBillForm">
+                <label for="addBillType">Bill</label>
+                <input type="text" id="addBillType" required>
+                <label for="addBillAmount">Amount:</label>
+                <input type="text" id="addBillAmount" placeholder="Enter amount" required>
+                
+                    <label for="addDueDate">Due Date</label>
+                <input type="date" id="addDueDate" required>
+
+                <label for="addPaidDate">Date Paid</label>
+                <input type="date" id="addPaidDate" required>
+
+                
+
+            
+                <label for="addBillStatus">Status:</label>
+                <select id="addBillStatus" required>
+                    <option value="paid">Paid</option>
+                    <option value="unpaid">Unpaid</option>
+                </select>
+                <button type="button" onclick="addBill()">Add</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal overlay for adding bill records -->
+    <div id="registerBillerModal" class="modal-overlay">
         <div class="modal-container">
             <span class="close-button" onclick="closeAddModal()"></span>
             <h2>Add Bill Record</h2>
@@ -246,7 +276,7 @@
 
         // JavaScript functions for opening and closing the add modal
         function openAddModal() {
-            const addModalOverlay = document.getElementById('addModalOverlay');
+            const addModalOverlay = document.getElementById('addBillModal');
             addModalOverlay.style.display = 'flex';
             const paidDate = document.getElementById('addPaidDate');
             const statusPaid = document.getElementById('addBillStatus')
@@ -260,7 +290,7 @@
         }
 
         function closeAddModal() {
-            const addModalOverlay = document.getElementById('addModalOverlay');
+            const addModalOverlay = document.getElementById('addBillModal');
             addModalOverlay.style.display = 'none';
         }
 

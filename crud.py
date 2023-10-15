@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from model import Tenant, User, Biller, BillRecord  # Replace 'your_module' with the actual module where Tenant is defined
 from sqlalchemy import create_engine
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound, StaleDataError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.exc import IntegrityError
 
@@ -60,17 +60,23 @@ def update_tenant(db: Session, id, data):
             # Update the record's attributes with the data provided
             for key, value in data.items():
                 setattr(record, key, value)
-            
-            session.commit()   
+                print("Key:",key," Value:",value)
+            session.commit()
             return record
-        
         except NoResultFound:
+            print("No Results Found")
             return None  # Record not found
+        except StaleDataError:
+            session.refresh(record)
+            print("Object has been modified need to refresh")
+            return None
         except Exception as e:
+            print("An Exception Occurred check below")
             session.rollback()
             raise e
         finally:
-            session.close()
+            #session.close()
+            pass
 
 #CRUD OPERATION FOR USER
 def create_user(session: Session, username, email, password):
@@ -112,13 +118,13 @@ def create_tenant(db: Session, unique_id: int, name: str, lastname: str, email: 
     db.commit()
 
 def get_tenant_by_id(db: Session, tenant_id: int):
-    return db.query(Tenant).filter(Tenant.id == tenant_id).first()
+    return db.query(Tenant).filter(id = tenant_id).first()
 
 def get_tenant_by_unique_id(db: Session, tenant_id: int):
-    return db.query(Tenant).filter(Tenant.unique_id == tenant_id).first()
+    return db.query(Tenant).filter(unique_id = tenant_id).first()
 
-def update_tenant(db: Session, tenant_id: int, name: str, lastname: str, email: str, duedate: str, paiddate: str):
-    tenant = db.query(Tenant).filter(Tenant.id == tenant_id).first()
+def update_tenants_old_version(db: Session, tenant_id: int, name: str, lastname: str, email: str, duedate: str, paiddate: str):
+    tenant = db.query(Tenant).filter(id = tenant_id).first()
     if tenant:
         tenant.name = name
         tenant.lastname = lastname
@@ -129,9 +135,9 @@ def update_tenant(db: Session, tenant_id: int, name: str, lastname: str, email: 
 
 def delete_tenant(db: Session, tenant_id: int):
     try:
-        tenant = db.query(Tenant).filter(Tenant.id == tenant_id).one()
+        tenant = db.query(Tenant)
      
-        db.delete(tenant)
+        tenant.delete()
         db.commit()
         
         return 0
@@ -154,7 +160,7 @@ def delete_tenant(db: Session, tenant_id: int):
 #DELETE OPERATIONS FOR MODELS
 def delete_user(db: Session, user_id: int):
     try:
-        user = db.query(User).filter(User.id == user_id).one()
+        user = db.query(User).filter(id = user_id).one()
      
         db.delete(user)
         db.commit()
@@ -177,7 +183,7 @@ def delete_user(db: Session, user_id: int):
     
 def delete_biller(db: Session, biller_id: int):
     try:
-        biller = db.query(Biller).filter(Biller.id == biller_id).one()
+        biller = db.query(Biller).filter(id = biller_id).one()
      
         db.delete(biller)
         db.commit()

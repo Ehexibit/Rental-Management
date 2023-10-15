@@ -91,14 +91,17 @@
             <h4>Rental Management</h4>
         </div>
         <div class="container-body">
-            <form action="/auth/login" method="post">
+            <form action="/auth/login" method="POST">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required="">
     
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required="">
-    
-                <button type="submit" onclick="onSignIn()">Sign in</button>
+                
+                    <button type="submit" onclick="onSignIn()">Sign in</button>
+                    <input style="color:#007BFF; text-align: center; border: none; outline: none;"id="status_response" type="text" readonly value="{{ status_response | default}}">
+                
+                
             </form>
         </div>
         
@@ -112,29 +115,30 @@
     <script>
         function onSignIn(){
             
-            const form = document.getElementById('registration');
+            const form = document.querySelector('form');
             const formData = new FormData(form);
             form.addEventListener('submit', (event) => { 
-                event.preventDefault();               
-            });
-            
-            fetch('/login', {
+                //event.preventDefault();
+                fetch('/auth/login', {
                 method: 'POST',
                 body: formData,
-            })
-            .then(response => response.json())
-            .then(data =>{
-                if(data.error_message){
-                     openModal(data.error_message);
-                }else{
-                    
-                    console.log("Signed In"); 
-                }
-            })
-            .catch(error => {
-                openModal("Error occured: "+error);
-                console.log('Error:', error);
-            });
+                })
+                .then(response => {})
+                .then(data =>{
+                    if(data.error){
+                        const stat = document.getElementById('status_response');
+                        stat.value = data.error;
+                    }else{
+                        
+                        console.log("Signed In"); 
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });              
+                });
+            
+           
                        
             
         }

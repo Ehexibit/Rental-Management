@@ -13,6 +13,8 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+   
     <style>
         .modal-overlay {
         display: none;
@@ -46,8 +48,8 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         h3 {
-            background-color: #3498db;
-            color: white;
+           
+            color: #3498db;
         }
         form {
             margin-top: 20px;
@@ -87,7 +89,7 @@
 
 
 </head>
-<body>
+<body onload="fetchData()">
     <header>
         <!-- Add your header content here, including the icon and title -->
         <a href="/"><div><i class="fas fa-home"></i></div></a>
@@ -106,8 +108,10 @@
                     <th>Name</th>
                     <th>Lastname</th>
                     <th>Contact</th>
-                    <th>Date Registered</th>
+                    <th>Due Date</th>
                     <th>Email</th>
+                    <th>Address</th>
+                    <th>Rent Rate</th>
                 </tr>
             </thead>
             <tbody id="data-list">
@@ -115,26 +119,66 @@
             </tbody>
         </table>
     </main>
-    <!--Update Form-->
-    <div id="update-modal-overlay" class="modal-overlay">
-        <div class="modal-container">
-            <span class="close-button" onclick="close_update_form()"></span>
-    
-        <h3>Update Tenant Info</h3>
-        <form>
-          <label for="name">Name:</label>
-          <input type="text" id="name" name="name" placeholder="Enter new Name">
-          <label for="lastname">Lastname:</label>
-          <input type="text" id="lastname" name="lastname" placeholder="Enter new Lastname">
-          <label for="contact">Contact:</label>
-          <input type="text" id="contact" name="contact" placeholder="Enter new Contact">
-          <label for="date">Date Registered:</label>
-          <input type="text" id="date" name="date" placeholder="Enter new Date Registered">
-          <label for="email">Email:</label>
-          <input type="text" id="email" name="email" placeholder="Enter new Email">
-          <button type="submit" onclick="apply_update()">Update</button>
+    <!--Update Form>
+    <div id="update-modal-overlay" class="modal fade">
+        <div class="modal-content"-->
+
+    <div class="modal fade" id="update-modal-overlay" tabindex="-1" role="dialog" aria-labelledby="Update-form" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <!--span class="close-button" onclick="close_update_form()"></span>
+            <h3>Update Tenant Info</h3-->
+            <div class="modal-header">
+                <h4 class="modal-title" style="padding-left: 20%;">Update Tenant Info</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+        <div class="container">
+        <form id="update-form">
+           
+          <!--label for="name">Name:</label-->
+          <div class="form-floating">
+            <input type="text" class="form-control" id="name" name="name" placeholder="Name" readonly>
+            <label for="name">Name</label>
+          </div>
+          <!--label for="lastname">Lastname:</label-->
+          <div class="form-floating mb-2">
+            <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Lastname" readonly>
+            <label for="lastname">Last Name</label>
+          </div>
+          
+          <div class="form-floating mb-2">
+            <input type="number" class="form-control" maxlength="11" id="contact" name="contact" placeholder="Enter new Contact" oninput="checkInputLength(this)">
+            <label for="contact">Contact</label>
+          </div>
+
+          <div class="form-floating mb-2">
+            <input type="date" class="form-control" id="due_date" name="due_date" placeholder="Enter new Date Registered">
+            <label for="due_date">Due Date</label>
+          </div>
+
+          <div class="form-floating mb-2">
+            <input type="number" class="form-control" id="rent_rate" name="rent_rate" placeholder="Enter new Rent Rate">
+            <label for="rent_rate">Rent Rate</label>
+          </div>
+
+          <div class="form-floating mb-2">
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter new Email">
+            <label for="email">Email</label>
+          </div>
+          
+          <div class="form-floating mb-2">
+            <!--input type="text" class="form-control" id="address" name="address" placeholder="Enter new Address"-->
+            <select class="form-select" id="address" name="address" required>
+                <option>3337 Matanzas st. Makati</option>
+                <option>4194 Negros st. Makati</option>
+            </select>
+            <label for="address">Address</label>
+          </div>
+          
+          <button id="update-button" type="submit" onclick="apply_update()">Update</button>
         </form>
-      
+        </div>
+        </div>
     </div>
     </div>
 
@@ -143,19 +187,61 @@
         <p><p>&nbsp;</p>&copy;2023 Ehexibit. All rights reserved.</p>
     </footer>
     <script>
+        
+        let selectedID = "";
+
+        const update_button = document.getElementById('update-button');
+        
+
         function close_update_form(){
 
-            const modalOverlay = document.getElementById('update-modal-overlay');
-            modalOverlay.style.display = 'None';
+            //const modalOverlay = document.getElementById('update-modal-overlay');
+           // modalOverlay.style.display = 'None';
+            $("#update-modal-overlay").modal('toggle');
+            const form = document.getElementById('update-form');
+            form.reset();
 
         }
-        function open_update_form(){
+       
+            
+
+        function open_update_form(cellsData){
+
+            
+            name = cellsData[0];
+            lastname = cellsData[1];
+            contact = cellsData[2];
+            due_date = cellsData[3];
+            email = cellsData[4];
+            address = cellsData[5];
+            rent_rate = cellsData[6];
+        
+            
             const modalOverlay = document.getElementById('update-modal-overlay');
-            modalOverlay.style.display = 'flex';
+            modalOverlay.ariaHidden = false;
+        
+            const form = document.getElementById('update-form');
+            
+            const input_name = document.getElementById("name");
+            const input_lastname = document.getElementById("lastname");
+            const input_contact = document.getElementById("contact");
+            const input_email= document.getElementById("email");
+            const input_address = document.getElementById("address");
+            const input_due_date = document.getElementById("due_date");
+            const input_rent_rate= document.getElementById("rent_rate");
+
+            input_name.value = name;
+            input_lastname.value = lastname;
+            input_contact.value = contact;
+            input_email.value = email;
+            input_address.value = address;
+            input_due_date.value = due_date;
+            input_rent_rate.value = rent_rate;
             
         }
         // Function to populate the data table
         function populateTable(data) {
+
             const dataList = document.getElementById("data-list");
             console.log(data);
             data.forEach(item => {
@@ -168,34 +254,94 @@
                     <td>${item['contact']}</td>
                     <td>${dateFormat(item['due_date'])}</td>
                     <td>${item['email']}</td>
+                    <td>${item['address']}</td>
+                    <td>${item['rent_rate']}</td>
                 `;
                 dataList.appendChild(row);
             });
 
-            const rows = document.querySelectorAll('tr');
-            rows.forEach(function (rw){
-
-            rw.addEventListener('click', function () {
-
-                    console.log('Open Update Form');
-                    open_update_form()
-                    console.log(rw.getAttribute("name"));
-                    console.log(rw.getAttribute("value"));
-
-                });
-            
-            });
-
+            row_tap_event();
 
 
         }
+        function checkInputLength(input) {
+            if (input.value.length > input.maxLength) {
+                input.value = input.value.slice(0, input.maxLength);
+            }
+        }
+        
+        function row_tap_event(){
+
+            const tbody = document.getElementById('data-list');
+            const rows = tbody.querySelectorAll('tr');
+            rows.forEach(function (rw){
+
+                rw.addEventListener('click', function () {
 
         
+                    console.log(rw.getAttribute("name"));
+                    console.log(rw.getAttribute("value"));
+                    selectedID = ""+rw.getAttribute("value");
+
+                    var cells = rw.getElementsByTagName("td");
+                    var cellsData = [];
+                    for(var i=0; i<cells.length; i++){
+                        cellsData.push(cells[i].innerText);
+                    }
+                    console.log("Cell data", cellsData);
+
+                    console.log('Open Update Form');
+                    open_update_form(cellsData);
+                    $("#update-modal-overlay").modal('toggle');
+
+                });
+
+            });
+
+        }
 
         function apply_update(){
 
-            close_update_form()
-            console.log('Submitting Update Form');
+            const form = document.getElementById('update-form');
+            const formData = new FormData(form);
+            form.addEventListener('submit',function(event){
+                event.preventDefault();
+            });
+            const url = "/tenant/"+selectedID;
+            var jsonObject = {};
+            for (var [key, value] of formData.entries()) {
+                jsonObject[key] = value;
+            }
+            var jsonData = JSON.stringify(jsonObject);
+            console.log("Id", selectedID);
+            console.log(jsonData);
+
+            fetch(url,{
+                method:'PUT',
+                body: jsonData,
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Add any other headers here as needed
+                }
+            }).then(response => response.json())
+            .then(data =>{
+                if(data.error){
+                    console.log(data.error);
+                }
+                else{
+
+                    close_update_form();
+                    resetTable();
+                    fetchData();
+                    console.log(data);
+                    console.log("Update applied successfully!");
+                }
+            }).catch(error => {
+                console.log('Error:', error);
+            })
+
+            
+            
         }
 
         // Call the function to populate the table with data
@@ -210,6 +356,13 @@
             });
             
         }
+        function resetTable() {
+             var tableBody = document.getElementById("data-list");
+             while (tableBody.firstChild) {
+                tableBody.removeChild(tableBody.firstChild);
+             }
+        }
+
         function dateFormat(dateString){
            
             // Create a Date object from the input string
@@ -221,13 +374,13 @@
             const year = date.getFullYear().toString(); // Get the last 2 digits of the year
 
             // Create the formatted date string in "mm/dd/yy" format
-            const formattedDate = `${month}-${day}-${year}`;
+            const formattedDate = `${year}-${month}-${day}`;
 
-            console.log(formattedDate); // Output: "12/01/15"
+            //console.log(formattedDate); // Output: "12/01/15"
 
             return formattedDate;
         }  
-        window.onload = fetchData;
+        //window.onload = fetchData;
     </script>
 </body>
 </html>

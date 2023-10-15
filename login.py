@@ -1,5 +1,5 @@
 
-from flask import Blueprint, current_app
+from flask import Blueprint, current_app, jsonify
 from flask import request, session, redirect, url_for, render_template
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
@@ -12,16 +12,26 @@ db = SQLAlchemy()
 
 @auth.route('/')
 def authm():
+    with current_app.app_context():
+        engine = current_app.engine
+
+    Session = sessionmaker(bind=engine)
+    db = Session()
+    result = db.query(User).count()
+    if result == 0:
+        return 'Create Account Please'
     return render_template('login.html')
+    #return f'{result}'
 
 
 @auth.route('/signup', methods=['GET','POST'])
 def signup():
-        from model import init_model
-        myModel = init_model()
-        if myModel == 'Success':
-            return 'Successful Creating Table'
-        else: return 'Table Already Exist'
+       
+        with current_app.app_context():
+            engine = current_app.engine
+
+        Session = sessionmaker(bind=engine)
+        db = Session()
 
         if request.method == 'POST':
             name = request.form[name]
@@ -30,8 +40,9 @@ def signup():
         name = request.args.get('name')
         password = request.args.get('password')
         
-        db.session.add(User(name,password))
-        db.session.commit()
+        db.add(User(name,password))
+        db.commit()
+        db.close()
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -51,15 +62,18 @@ def login():
         Session = sessionmaker(bind=engine)
         db = Session()
         username = get_user_by_username(db, request.form['username'])
-        db.close()
 
         if(username is not None):
             if(username.check_password(request.form['password'])):
+                
                 session['logged_in'] = True
-                session['user_id'] = username.id       
-                return redirect(url_for('admin'))     
-            return 'Log in failure due to incorrect credentials'
-        return 'Log in failure due to user not registered'
+                session['user_id'] = username.id
+                db.close()       
+                return redirect(url_for('admin'))
+                 
+            return render_template('login.html',status_response="Invalid Credentials")
+        db.close()
+        return render_template('login.html',status_response="User is not registered")
         
     print('logged_in' in session)
     if 'logged_in' in session:

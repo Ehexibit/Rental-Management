@@ -106,7 +106,7 @@
                     </div>
                      
                     <button name="submit" type="submit" class="btn btn-primary" onclick="update_account()">Submit</button>
-                     
+                    <input style="outline:none; padding-left: 20%; color:blue; border: none;" type="text" id="status" readonly>
                     
                 </form>
             </div>
@@ -144,12 +144,12 @@
             const form = document.querySelector('form')
             const username = document.querySelector('#username')
             const password = document.querySelector('#password')
-            console.log(username.value, password.value);
+            //console.log(username.value, password.value);
 
             const formData = new FormData(form);
-            formData.forEach((value,key) => {
-                console.log("Key Value Pair", value , key);
-            });
+            //formData.forEach((value,key) => {
+            //    console.log("Key Value Pair", value , key);
+            //});
 
             form.addEventListener('submit', function (event) {
 
@@ -166,17 +166,30 @@
                 })
                 .then(response => response.json())
                 .then(data =>{
+                    const status = document.getElementById('status');
 
-                    console.log("response status code:", data);
-                    if(data.status === 405){
-                     console.log("Failed updating password")
-                    }else{
-                     console.log("Updating Successful!")
-                     form.reset();
+                    if(data.error){
+                        console.log("Server responsed with error exception:",data.error);
+                        form.reset();
+                        console.log("Failed updating password!");
+                        status.value = ''+data.error;
                     }
+                    else{
+                        console.log("Server responsed:",data);
+                        form.reset();
+                        status.value = 'Successfully Updated';
+                        
+                    }
+                    
+                    //if(data.status === 405){
+                    //}else{
+                    // console.log("Updating Successful!");
+                    //}
                 })
                 .catch(error => {
-                console.log('Error:', error);
+                   
+                        console.log('Error:', error);
+                
                 });
                 console.log("Submitted");  
             

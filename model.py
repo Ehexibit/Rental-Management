@@ -1,3 +1,4 @@
+#from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship , Session
 from sqlalchemy import Column, Integer, String, ForeignKey, Date, Enum, Double, create_engine, inspect
@@ -55,7 +56,7 @@ class Tenant(Base):
     due_date = Column(Date,nullable=False)
     paid_date = Column(Date)
     rent_rate = Column(Double, nullable=False)
-    contact = Column(Integer)
+    contact = Column(String[12])
     gender = Column(Enum('Male','Female','Other'),default='Other')
     address = Column(String(150))
 
@@ -81,7 +82,9 @@ class Tenant(Base):
                     "lastname": self.lastname,
                     "email": self.email,
                     "contact": self.contact,
-                    "due_date": self.due_date
+                    "due_date": self.due_date,
+                    "rent_rate": self.rent_rate,
+                    "address": self.address
                     
                 }
 
@@ -120,36 +123,64 @@ class Entity(Base):
 
 def init_model():
 
-    from flask import current_app
+    #from flask import current_app
     #from flask_mysqldb import MySQL
     #mysql = MySQL()
     with current_app.app_context():
         
-        mysql = current_app.mysql
+        engine = current_app.engine
       
-    engine = create_engine('mysql://', creator=lambda: mysql.connection)
     #Create a session
     Session = sessionmaker(bind=engine)
     session = Session()
+    
 
-    create_tables_if_not_exist(Base,engine)
+    create_tables_if_not_exist(Base,engine,session)
     # Close the session when done
     session.close()
     # Check if tables exist and create them if needed
 
-def create_tables_if_not_exist(Base,engine):
+#def create_tables_if_not_exist(Base,engine):
+#    print("Creating Table")
+#    inspector = inspect(engine)
+#    existing_tables = inspector.get_table_names()
+    #Base.metadata.create_all(engine)
 
+#    for table_name in Base.metadata.tables.keys():
+#        if table_name in existing_tables:
+           
+            #Base.metadata.create_all(engine,tables=[BillRecord.__table__]) -> for specific table creation
+            #It will not word though if table name is already at the database so you should DROP TABLE table name firt
+            #Base.metadata.create_all(engine)
+            #print(f"Table {table_name} created.")
+#            try:
+#                Base.metadata.create_all(engine)
+#                print("Tables created successfully")
+#            except Exception as e:
+#                print(f"An error occurred: {e}")
+
+def create_tables_if_not_exist(Base, engine, session):
+    print("Creating Table")
     inspector = inspect(engine)
     existing_tables = inspector.get_table_names()
 
     for table_name in Base.metadata.tables.keys():
-        if table_name in existing_tables:
-           
-            #Base.metadata.create_all(engine,tables=[BillRecord.__table__]) -> for specific table creation
-            #It will not word though if table name is already at the database so you should DROP TABLE table name firt
-            Base.metadata.create_all(engine)
-            print(f"Table {table_name} created.")
-
+        if table_name not in existing_tables:
+            try:
+                Base.metadata.create_all(engine, tables=[Base.metadata.tables[table_name]])
+                print(f"Table {table_name} created successfully.")
+            except Exception as e:
+                print(f"An error occurred: {e}")
+        else:
+            result = session.query(User).count()
+            if result == 0:
+                session.add(User('admin','test1234@gmail.com','test1234'))
+                session.commit()
+            id = session.query(Entity).count()
+            if id == 0:
+                session.add(Entity())
+                session.commit()
+            print(f"Table {table_name} already exists.")
 
 
 

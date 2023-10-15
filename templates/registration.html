@@ -38,8 +38,8 @@
             <div class="form-group">
                 <label for="boardinghouse">Boarding House</label>
                 <select type="text" id="address" name="address" required>
-                    <option>3337 MATANZAS ST. MAKATI</option>
-                    <option>4194 NEGROS ST. MAKATI</option>
+                    <option>3337 Matanzas st. Makati</option>
+                    <option>4194 Negros st. Makati</option>
                 </select>
             </div>
             <div class="form-group">
@@ -103,8 +103,8 @@
             })
             .then(response => response.json())
             .then(data =>{
-                if(data.error_message){
-                     openModal(data.error_message);
+                if(data.error){
+                     openModal(data.error);
                 }else{
                     openModal("Successful Submission!");
                 }
