@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm.exc import NoResultFound, StaleDataError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.exc import IntegrityError
+from datetime import datetime
 
 class ModelOperator:
     def __init__(self, session: Session):
@@ -32,7 +33,11 @@ class ModelOperator:
             
             # Update the record's attributes with the data provided
             for key, value in data.items():
-                setattr(record, key, value)
+                if key == 'due_date':
+                    date = datetime.strptime(value, "%Y-%m-%d")
+                    setattr(record, key, date)
+                else:
+                    setattr(record, key, value)
             
             session.commit()
             
@@ -59,8 +64,15 @@ def update_tenant(db: Session, id, data):
             
             # Update the record's attributes with the data provided
             for key, value in data.items():
-                setattr(record, key, value)
                 print("Key:",key," Value:",value)
+                if key == 'due_date':
+                    date = datetime.strptime(value, "%Y-%m-%d")
+                    setattr(record, key, date)
+                else:
+                    setattr(record, key, value)
+
+                #setattr(record, key, value)
+                
             session.commit()
             return record
         except NoResultFound:
