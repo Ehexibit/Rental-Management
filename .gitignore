@@ -1,4 +1,4 @@
 \reman_venv
 \__pycache__
 \.vs
-\reman\sqlite.log
+reman/sqlite.log
