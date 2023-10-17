@@ -34,15 +34,35 @@ def signup():
         db = Session()
 
         if request.method == 'POST':
-            name = request.form[name]
-            password = request.form[password]
-            
-        name = request.args.get('name')
-        password = request.args.get('password')
-        
-        db.add(User(name,password))
-        db.commit()
-        db.close()
+
+            if session['access'] == 'superadmin': # if 'access' in session == 'superadmin': is bug
+                
+                name = request.form['username']
+                password = request.form['password']
+                email = request.form['email']
+                access = request.form['account-type']
+
+                print(f"Signing up user: {name} email:{email} access:{access}")
+                #name = request.args.get('name')
+                #password = request.args.get('password')
+                try:
+                    print(f"Signing up user: {name} email:{email} access:{access}")
+                    db.add(User(name,email,password,access))
+                    db.commit()
+                    return jsonify("Account Created Successfully!")
+                except Exception as e:
+                    db.rollback()
+                    print(e)
+                    return jsonify(error = str(e))
+                finally:
+                    db.close()
+            else:
+                print("Authentication Failed")
+                return redirect(url_for('auth.authm'))
+                
+
+        if request.method == 'GET':
+            return render_template('signup.html')
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -68,16 +88,26 @@ def login():
                 
                 session['logged_in'] = True
                 session['user_id'] = username.id
-                db.close()       
-                return redirect(url_for('admin'))
+                session['username'] = username.username
+                session['access'] = username.access
+                db.close()
+                if session['access'] == 'superadmin':
+                    print("Access level: ",session['access'])
+                    return redirect(url_for('admin',admin_name=session['username'],access_type="super"))
+                else:
+                    return redirect(url_for('admin',admin_name=session['username']))       
+                #return redirect(url_for('admin',admin_name=username.username))
                  
             return render_template('login.html',status_response="Invalid Credentials")
         db.close()
         return render_template('login.html',status_response="User is not registered")
         
-    print('logged_in' in session)
+    print("Session Logged In: ",'logged_in' in session)
     if 'logged_in' in session:
-        return redirect(url_for('admin'))
+        if 'access' in session == 'superadmin':
+            return redirect(url_for('admin',admin_name=session['username'],access_type="admin"))
+        else:
+            return redirect(url_for('admin',admin_name=session['username']))
     else:
         return redirect(url_for('auth.authm'))
 
@@ -87,8 +117,9 @@ def logout():
     print('Log out method = ', request.method)
 
     if 'logged_in' in session:
-        print('logged_in' in  session)
+        print("Session Logged In:",'logged_in' in  session)
         session.pop('logged_in')
+        print("Session Logged In:",'logged_in' in  session)
         return redirect(url_for('auth.login'))    
     return redirect(url_for('auth.login'))
 
@@ -107,6 +138,6 @@ def dashboard():
     if not session.get('logged_in'):
         print('Sorry folks you cant log in')
         return redirect(url_for('auth.authm'))
-    return redirect(url_for('admin'))
+    return redirect(url_for('admin',admin_name="None"))
     
     

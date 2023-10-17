@@ -6,7 +6,7 @@ from datetime import datetime
 
 tenant = Blueprint('tenant', __name__)
 
-@tenant.route('/', methods=['GET','POST','DELETE'])
+@tenant.route('/tenant', methods=['GET','POST','DELETE'])
 def tenants():
     if not 'logged_in' in session:
         return redirect(url_for('auth.authm'))
@@ -68,7 +68,7 @@ def tenants():
             tenants = db.query(Tenant).all()
             jsonarray = [tenant.to_json() for tenant in tenants]
             print("Getting Tenant List")
-            # db.close()
+            db.close()
             if jsonarray:
                 return jsonarray
             return 'Empty'
@@ -97,7 +97,7 @@ def tenants():
     
     return 'Invalid Request'
     
-@tenant.route('/<int:tenant_id>', methods=['GET','PUT', 'DELETE'])
+@tenant.route('/tenant/<int:tenant_id>', methods=['GET','PUT', 'DELETE'])
 def tenant_crud(tenant_id):
     if not 'logged_in' in session:
         return redirect(url_for('auth.authm'))

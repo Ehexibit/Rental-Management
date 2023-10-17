@@ -2,6 +2,7 @@ from flask import Flask, request, session, redirect, url_for, render_template, j
 from flask_mysqldb import MySQL
 import os #OS command
 import re #Regix pattern
+import logging
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.orm import declarative_base
@@ -35,11 +36,19 @@ def create_app():
     # Define the absolute path to the database file
     current_dir = os.path.dirname(os.path.abspath(__file__))
     #db_path = os.path.join(current_dir, '/reman/reman.db')
+    # Set up a custom logger for SQLite echoing
+    sqlite_logger = logging.getLogger('sqlalchemy.engine')
+    sqlite_logger.setLevel(logging.INFO)
+    sqlite_handler = logging.FileHandler(f"{current_dir}/reman/sqlite.log")  # Set the file name
+    sqlite_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    sqlite_handler.setFormatter(sqlite_formatter)
+    sqlite_logger.addHandler(sqlite_handler)
+
     db_path = current_dir+'/reman/reman.db'
     db_url = f'sqlite:///{db_path}'
     print("Path",db_path)
     # Create an engine that connects to the database
-    engine = create_engine(db_url, echo=True)
+    engine = create_engine(db_url)
 
     #engine = create_engine('mysql://', creator=lambda: mysql.connection, pool_pre_ping=True)
     #engine = create_engine('sqlite:///C:/Users/Efren/Rental-Management/reman/reman.db', echo=True)
@@ -58,20 +67,28 @@ def create_app():
     from get_data import get_data
     app.register_blueprint(get_data)
     from tenant import tenant
-    app.register_blueprint(tenant,url_prefix='/tenant')
+    app.register_blueprint(tenant,url_prefix='/api')
     from user import user
-    app.register_blueprint(user,url_prefix='/user')
+    app.register_blueprint(user,url_prefix='/api')
 
     return app
 
 app = create_app()
 
 @app.route('/')
-def admin():
+def home():
+    return redirect(url_for('auth.login'))
+
+@app.route('/<admin_name>')    
+@app.route('/<admin_name>/<access_type>')
+def admin(admin_name,access_type=None):
 
     if not 'logged_in' in session:
         return redirect(url_for('auth.authm'))
-    return render_template('admin.html')
+    if access_type is None:
+        return render_template('admin.html',admin_name=admin_name)
+    else:
+        return render_template('admin.html',admin_name=admin_name,access_type=access_type)
 
 @app.route('/registration')
 def registration():

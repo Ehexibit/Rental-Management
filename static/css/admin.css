@@ -20,11 +20,13 @@ header h2 {
     margin-left: 5px; /* Remove default margin to make it flush with the header */
 }
 header i {
+    
     text-align: left;
     font-family: 'Arial', sans-serif; /* Choose a suitable font-family */
     font-size: 36px; /* Adjust the font size */
     color: #fff;
     margin-left: 10px; /* Remove default margin to make it flush with the header */
+    cursor: pointer;
 }
 .dashboard-box {
     display: block;
@@ -51,7 +53,9 @@ header i {
 }
 
 .dashboard-box:hover {
-    background-color: #2980b9;
+    background-color:  #0058b3;
+    color: white;
+    text-shadow: 0 0 10px #93c7ff;
 }
 
 .dashboard-box h2 {

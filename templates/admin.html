@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>  
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/drop_down_menu.css') }}">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -14,23 +14,25 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/drop_down_menu.css') }}">
     
 
 </head>
 <body>
     <header>
             <div>
-                <i class="fas fa-bars" id="dropdown-btn">
-                    <div class="dropdown">
+                <div class="dropdown">
+                    <i class="fas fa-bars" id="dropdown-btn"> <!--This is hamburger icon-->
                         <div class="dropdown-menu" id="dropdown-menu">
                             <ul>
-                                <li><a style="text-decoration: none;" href="#/auth/signup">Register Account</a></li>
-                                <li><a style="cursor: pointer; text-decoration: none;" data-toggle="modal" data-target="#modalForm">Account Settings</a></li>
-                                <li><a style="text-decoration: none;" href="/auth/logout">Logout</a></li>
+                                <li class="{{ access_type | default('disabled-link')}} "><a style="text-decoration: none;" href="/auth/signup">Register Account</a></li>
+                                <li class="{{ access_type | default('disabled-link')}} "><a href="/api/user">View Accounts</a></li>
+                                <li id="user-account" value="{{ admin_name | default}}" onclick="username_change(this)"><a data-toggle="modal" data-target="#modalForm">Account Settings</a></li>
+                                <li><a href="/auth/logout">Logout</a></li>
                             </ul>
-                        </div>
-                    </div>
-                </i>
+                        </div>       
+                    </i>
+                </div>
             </div>
             <h1>Management<p>Dashboard</p></h1>
     </header>
@@ -89,7 +91,7 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
 
-                <form id="account_setting" onsubmit="" action="/user" method="POST">
+                <form id="account_setting" onsubmit="" action="/api/user" method="POST">
 
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="username" name="username" placeholder="Username">
@@ -140,8 +142,15 @@
         <p>&copy; 2023 Ehexibit - All rights reserved </p>
     </footer>
     <script>
+        function username_change(input){
+            console.log("Change Password UI is open");
+            const username = document.getElementById('username');
+            username.value = input.getAttribute('value');
+            username.disabled = true;
+            //console.log(document.getElementById("user-account").getAttribute('value'));
+        }
         function update_account(){
-            console.log('Account updating..');
+            console.log('function update_account() is called');
             const form = document.querySelector('form')
             const username = document.querySelector('#username')
             const password = document.querySelector('#password')
@@ -160,8 +169,8 @@
             });
             
             
-
-            fetch('/user', {
+            console.log('Requesting on server to update account...');
+            fetch('/api/user', {
                     method: 'PUT',
                     body: formData,
                 })
@@ -170,14 +179,17 @@
                     const status = document.getElementById('status');
 
                     if(data.error){
-                        console.log("Server responsed with error exception:",data.error);
-                        form.reset();
+                        
+                            console.log("Server responded with error exception:",data.error);
+                        
                         console.log("Failed updating password!");
                         status.value = ''+data.error;
                     }
                     else{
-                        console.log("Server responsed:",data);
-                        form.reset();
+                        
+                            console.log("Server responded with error exception:",data.error);
+
+                        console.log("Server response:",data);
                         status.value = 'Successfully Updated';
                         
                     }

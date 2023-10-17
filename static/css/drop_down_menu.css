@@ -13,7 +13,7 @@
 .dropdown {
   position: relative;
   display: inline-block;
-  margin: 20px;
+  margin: 10px;
 }
 
 /* Dropdown menu styles */
@@ -27,7 +27,7 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   z-index: 1;
-  width: 160px; /* Adjust the width as needed */
+  width: 150px; /* Adjust the width as needed */
 }
 
 /* Dropdown menu items */
@@ -37,19 +37,49 @@
   margin: 0;
 }
 
-.dropdown-menu li {
-  padding: 10px;
-}
 
 /* Links in the dropdown menu */
 .dropdown-menu a {
-  text-decoration: none;
+  
   color: #333;
   font-size: 14px;
   display: block;
+  text-decoration: none;
+  padding: 10px;
 }
 
 /* Hover effect for links */
 .dropdown-menu li:hover {
   background-color: #6db1fa;
+  color:#fff;
+  cursor: pointer;
+}
+/* This code means When pointer hover at 
+container-dropdown on child <li> it will target <a> 
+which is a sub of <li> or wrap in <li>. 
+since both element has it's own property we need to individually target it
+because if we just select <a> on defining hover it will affect the unselected <a>
+hover element even if that it not being hovered because it generalize the css style applyication on tag <a>*/
+.dropdown-menu li:hover a{
+  color: white;
+}
+.disabled-link a{
+  background-color: rgb(212, 210, 210);
+  pointer-events: none;
+  color: white;
+  cursor: pointer;
+}
+li.disabled-link{
+  
+  background-color: rgb(212, 210, 210);
+  pointer-events: none;
+  color: white;
+  cursor: pointer;
+}
+
+li.disabled-link:hover{
+  pointer-events: none;
+  background-color: rgb(212, 210, 210);
+  color: grey;
+  cursor: default;
 }

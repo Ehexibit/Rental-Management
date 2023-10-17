@@ -17,10 +17,12 @@ class User(Base):
     username = Column(String(80), unique=True, nullable=False)
     email = Column(String(120), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
+    access = Column(Enum('superadmin','admin','user'),default='user')
 
-    def __init__(self, username, email, password):
+    def __init__(self, username, email, password, access=None):
         self.username = username
         self.email = email
+        self.access = access
         self.set_password(password)
 
     def set_password(self, password):
@@ -36,7 +38,8 @@ class User(Base):
     def to_json(self):
         return  { 
                     "email":  self.email,
-                    "username": self.username
+                    "username": self.username,
+                    "access": self.access
                     
                 }
 
@@ -174,13 +177,13 @@ def create_tables_if_not_exist(Base, engine, session):
         else:
             result = session.query(User).count()
             if result == 0:
-                session.add(User('admin','test1234@gmail.com','test1234'))
+                session.add(User('admin','test1234@gmail.com','test1234',access='superadmin'))
                 session.commit()
             id = session.query(Entity).count()
             if id == 0:
                 session.add(Entity())
                 session.commit()
-            print(f"Table {table_name} already exists.")
+            print(f"Table {table_name} already exist.")
 
 
 
