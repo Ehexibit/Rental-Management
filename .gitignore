@@ -2,3 +2,4 @@
 \__pycache__
 \.vs
 reman/sqlite.log
+reman/reman.db
