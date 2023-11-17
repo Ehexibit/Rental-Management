@@ -12,9 +12,10 @@ db = SQLAlchemy()
 
 @auth.route('/')
 def authm():
+
     with current_app.app_context():
         engine = current_app.engine
-
+        
     Session = sessionmaker(bind=engine)
     db = Session()
     result = db.query(User).count()
@@ -27,6 +28,7 @@ def authm():
 @auth.route('/signup', methods=['GET','POST'])
 def signup():
        
+
         with current_app.app_context():
             engine = current_app.engine
 
@@ -35,7 +37,7 @@ def signup():
 
         if request.method == 'POST':
 
-            if session['access'] == 'superadmin': # if 'access' in session == 'superadmin': is bug
+            if session['access'] == 'superadmin' and 'logged_in' in session: # if 'access' in session == 'superadmin': is bug
                 
                 name = request.form['username']
                 password = request.form['password']
@@ -89,7 +91,7 @@ def login():
                 session['logged_in'] = True
                 session['user_id'] = username.id
                 session['username'] = username.username
-                session['access'] = username.access
+                session['access'] = username.access #Access Level Superadmin, admin of user
                 db.close()
                 if session['access'] == 'superadmin':
                     print("Access level: ",session['access'])
@@ -118,7 +120,7 @@ def logout():
 
     if 'logged_in' in session:
         print("Session Logged In:",'logged_in' in  session)
-        session.pop('logged_in')
+        session.pop('logged_in')      
         print("Session Logged In:",'logged_in' in  session)
         return redirect(url_for('auth.login'))    
     return redirect(url_for('auth.login'))
@@ -132,12 +134,12 @@ def logout():
         
    
 
-@auth.route('/dashboard', methods=['GET','POST'])
-def dashboard():
+#@auth.route('/dashboard', methods=['GET','POST'])
+#def dashboard():
 
-    if not session.get('logged_in'):
-        print('Sorry folks you cant log in')
-        return redirect(url_for('auth.authm'))
-    return redirect(url_for('admin',admin_name="None"))
+#    if not session.get('logged_in'):
+#        print('Sorry folks you cant log in')
+#        return redirect(url_for('auth.authm'))
+#    return redirect(url_for('admin',admin_name="None"))
     
     

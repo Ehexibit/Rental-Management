@@ -70,6 +70,12 @@ def create_app():
     app.register_blueprint(tenant,url_prefix='/api')
     from user import user
     app.register_blueprint(user,url_prefix='/api')
+    from biller import biller
+    app.register_blueprint(biller,url_prefix='/api')
+    from billrecord import billrecord
+    app.register_blueprint(billrecord,url_prefix='/api')
+    from entity import entity
+    app.register_blueprint(entity,url_prefix='/api')
 
     return app
 

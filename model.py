@@ -65,14 +65,14 @@ class Tenant(Base):
 
     entity = relationship('Entity')
 
-    def __init__(self, unique_id, due_date, rent_rate, name, lastname=None, email=None, paid_date=None, contact=None, gender=None, address=None):
+    def __init__(self, unique_id, due_date, rent_rate, name, lastname=None, email=None, contact=None, gender=None, address=None):
         
         self.unique_id = unique_id
         self.name = name
         self.lastname = lastname
         self.email = email
         self.due_date = due_date
-        self.paid_date = paid_date
+        #self.paid_date = paid_date
         self.rent_rate = rent_rate
         self.contact = contact
         self.gender = gender
@@ -87,7 +87,8 @@ class Tenant(Base):
                     "contact": self.contact,
                     "due_date": self.due_date,
                     "rent_rate": self.rent_rate,
-                    "address": self.address
+                    "address": self.address,
+                    "unique_id": self.unique_id
                     
                 }
 
@@ -96,7 +97,9 @@ class Tenant(Base):
     
 
 class BillRecord(Base):
+
     __tablename__ = 'billrecord'
+
     id = Column(Integer,primary_key=True)
     unique_id = Column(Integer, ForeignKey('entity.id'))
     due_date = Column(Date, nullable=False)
@@ -105,24 +108,72 @@ class BillRecord(Base):
 
     entity = relationship('Entity')
 
-
-    def __init__(self, unique_id, duedate, paiddate=None):
+    def __init__(self, unique_id, due_date, paid_date=None):
         
         self.unique_id = unique_id
-        self.duedate = duedate
-        self.paiddate = paiddate
+        self.due_date = due_date
+        self.paid_date = paid_date
+
+
+    def to_json(self):
+
+        return{
+
+            "due_date": self.due_date,
+            "paid_date": self.paid_date,
+            "bill_status": self.bill_status,
+            "unique_id": self.unique_id
+        }
 
 class Biller(Base):
     __tablename__ = 'biller'
     id = Column(Integer,primary_key=True)
     name = Column(String(50), nullable=False)
     unique_id = Column(Integer, ForeignKey('entity.id'))
+    amount = Column(Double) #Leave it Empty first If amount is null then it is not a fix rate
+    due_date = Column(Date) #Leave it Empty first If due date is null then it is not a continues bill
 
     entity = relationship('Entity')
 
+    def __init__(self, name, unique_id, due_date=None, amount=None):
+        self.name = name
+        self.unique_id = unique_id
+        self.due_date = due_date
+        self.amount = amount
+
+    def to_json(self):
+
+        return{
+            
+            "id": self.id,
+            "biller_name": self.name,
+            "biller_amount": self.amount,
+            "biller_due_date": self.due_date,
+            "unique_id": self.unique_id
+        }
+
+
 class Entity(Base):
+
     __tablename__ = 'entity'
+
     id = Column(Integer,primary_key=True)
+    name = Column(String(50))
+
+    def __init__(self, name=None):
+        self.name = name
+
+    def to_json(self):
+
+        return{
+
+            "id": self.id,
+            "name": self.name
+        }
+
+
+#We will call this to initialize tables if there's no table then it will create
+#the tables   
 
 def init_model():
 
@@ -168,10 +219,19 @@ def create_tables_if_not_exist(Base, engine, session):
     existing_tables = inspector.get_table_names()
 
     for table_name in Base.metadata.tables.keys():
+
+        '''
+        #This comment out code is use to edit recreate the table specially if we add column so the existing table will be recreated to apply it
+        if table_name == 'biller' or table_name == 'billrecord':
+            Base.metadata.tables[table_name].drop(engine) 
+            print(f"Table {table_name} created successfully.")
+            Base.metadata.create_all(engine, tables=[Base.metadata.tables[table_name]])
+        '''
         if table_name not in existing_tables:
             try:
                 Base.metadata.create_all(engine, tables=[Base.metadata.tables[table_name]])
                 print(f"Table {table_name} created successfully.")
+                
             except Exception as e:
                 print(f"An error occurred: {e}")
         else:
@@ -184,7 +244,8 @@ def create_tables_if_not_exist(Base, engine, session):
                 session.add(Entity())
                 session.commit()
             print(f"Table {table_name} already exist.")
-
+         
+            
 
 
 

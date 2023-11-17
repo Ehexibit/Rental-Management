@@ -29,14 +29,17 @@ def tenants():
             rent_rate = request.form['rent_rate']
             contact = request.form['contact']
             address = request.form['address']
+            db.add(Entity(name=name))
             unique_id = db.query(Entity).order_by(Entity.id.desc()).first().id
             print('Assigning form data completed')
             try:
                 check_if_already_registered = db.query(Tenant).filter(Tenant.name == name, Tenant.lastname == lastname).count()
                 if check_if_already_registered > 0:
+                    db.rollback()
                     db.close()
                     return jsonify(error = str('Tenant Already Registered'))
             except Exception as e:
+                db.rollback()
                 db.close()
                 return jsonify(error = str(e))
             
@@ -51,10 +54,11 @@ def tenants():
                     contact = contact,
                     address = address
                 ))
-            db.add(Entity())
+            #db.add(Entity())
             db.commit()
             return jsonify(str(f'Successfully Registered {name}'f' {lastname}'))
         except Exception as e:
+            db.rollback()
             print(str(e))
             return jsonify(error=str(e))
         finally:

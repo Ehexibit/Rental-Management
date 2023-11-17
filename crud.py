@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from datetime import datetime
 
 class ModelOperator:
+    
     def __init__(self, session: Session):
         self.Session = session
 
